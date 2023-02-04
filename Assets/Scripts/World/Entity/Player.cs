@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using World.Block;
 
@@ -10,10 +10,10 @@ namespace World.Entity {
         public bool isSprinting;
 
         private Transform _camera;
-        
+
         // SCREENS
         [SerializeField] private GameObject menuScreen;
-        
+
         // OBJECTS
         [SerializeField] private World world;
         [SerializeField] private Transform highlightBlock;
@@ -26,7 +26,7 @@ namespace World.Entity {
         [SerializeField] private float gravity = -9.81f;
 
         [SerializeField] private float playerWidth = 0.3f;
-        [SerializeField] private float bounceTolerance = 0.1f;
+        //[SerializeField] private float bounceTolerance = 0.1f;
 
         [SerializeField] private float checkIncrement = 0.1f;
         [SerializeField] private float reach = 8f;
@@ -47,7 +47,7 @@ namespace World.Entity {
             } else {
                 Debug.LogError("Camera on player == null");
             }
-            
+
             LockCursor(true);
         }
 
@@ -59,11 +59,12 @@ namespace World.Entity {
 
         private void FixedUpdate() {
             if (IsMenuOpen()) return;
-            
+
             CalculateVelocity();
             if (_jumpRequest) {
                 Jump();
             }
+
             transform.Translate(_velocity, Space.World);
         }
 
@@ -88,6 +89,7 @@ namespace World.Entity {
             _jumpRequest = false;
         }
 
+        [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         private void CalculateVelocity() {
             // Affect vertical momentum with gravity
             if (_verticalMomentum > gravity) {
@@ -96,9 +98,11 @@ namespace World.Entity {
 
             // if sprinting
             if (isSprinting) {
-                _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) * (Time.fixedDeltaTime * sprintSpeed);
+                _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) *
+                            (Time.fixedDeltaTime * sprintSpeed);
             } else {
-                _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) * (Time.fixedDeltaTime * walkSpeed);
+                _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) *
+                            (Time.fixedDeltaTime * walkSpeed);
             }
 
             // apply vertical momentum
@@ -159,18 +163,20 @@ namespace World.Entity {
                 var pos = _camera.position + (_camera.forward * step);
 
                 if (world.CheckForBlock(pos)) {
-                    highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+                    highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y),
+                        Mathf.FloorToInt(pos.z));
                     placeBlock.position = lastPos;
-                    
+
                     highlightBlock.gameObject.SetActive(true);
                     placeBlock.gameObject.SetActive(true);
-                    
+
                     return;
                 }
-                
+
                 lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 step += checkIncrement;
             }
+
             highlightBlock.gameObject.SetActive(false);
             placeBlock.gameObject.SetActive(false);
 
@@ -189,6 +195,7 @@ namespace World.Entity {
                 isGrounded = true;
                 return 0;
             }
+
             isGrounded = false;
             return downSpeed;
         }
@@ -205,10 +212,11 @@ namespace World.Entity {
                 world.CheckForBlock(x - width, y + 2f + upSpeed, z + width)) {
                 return 0;
             }
+
             return upSpeed;
         }
 
-        public bool Front {
+        private bool Front {
             get {
                 var transformPosition = transform.position;
                 var x = transformPosition.x;
@@ -220,7 +228,7 @@ namespace World.Entity {
             }
         }
 
-        public bool Back {
+        private bool Back {
             get {
                 var transformPosition = transform.position;
                 var x = transformPosition.x;
@@ -232,7 +240,7 @@ namespace World.Entity {
             }
         }
 
-        public bool Left {
+        private bool Left {
             get {
                 var transformPosition = transform.position;
                 var x = transformPosition.x;
@@ -245,7 +253,7 @@ namespace World.Entity {
             }
         }
 
-        public bool Right {
+        private bool Right {
             get {
                 var transformPosition = transform.position;
                 var x = transformPosition.x;
