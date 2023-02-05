@@ -32,7 +32,8 @@ namespace World {
             debugText = debugScreenCanvas.GetComponentInChildren<Text>();
             if (debugText == null) {
                 Debug.LogError("Debug text == null");
-            } 
+            }
+
             StartCoroutine(GenerateChunks());
         }
 
@@ -52,18 +53,26 @@ namespace World {
         public int Seed => seed;
         private Vector3 spawnPosition;
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator GenerateChunks() {
             var loadedChunks = 0;
             var size = VoxelData.WorldSizeInChunks;
+            var chunkCount = size * size * 2;
             for (int x = 0; x < size; x++) {
                 for (int z = 0; z < size; z++) {
                     CreateNewChunk(x, z);
                     activeChunks++;
-                    
-                    slider.value = (float) (loadedChunks++) / (size * size);
-                    yield return new WaitForSeconds(0.01f);
+                    slider.value = (float)loadedChunks++ / chunkCount;
+                    yield return new WaitForSeconds(0.001f);
                 }
             }
+
+            foreach (var chunk in _chunks) {
+                slider.value = (float)loadedChunks++ / chunkCount;
+                chunk.RenderChunk();
+                yield return new WaitForSeconds(0.001f);
+            }
+
             StartCoroutine(SpawnInPlayer());
         }
 

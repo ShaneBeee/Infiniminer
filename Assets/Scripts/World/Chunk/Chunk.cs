@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using World.Block;
 
 namespace World.Chunk {
+    [SuppressMessage("ReSharper", "Unity.InefficientMultidimensionalArrayUsage")]
     public class Chunk {
 
         private ChunkCoord _coord;
@@ -44,19 +45,15 @@ namespace World.Chunk {
 
         public World World => _world;
 
-        private async void SetupChunk() {
-            //PopulateBlocks();
+        private void SetupChunk() {
             ChunkGenerator.PopulateBlocks(this);
-            // Small delay to make sure neighbour chunks
-            // are generated before attempting to check
-            await Task.Delay(10);
-            UpdateChunk();
         }
 
         public void SetBlock(int x, int y, int z, Block.Block block) {
             if (x < 0 || x > 15 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > 15) {
                 throw new ArgumentException($"SetBlock out of range: {x},{y},{z}");
             }
+
             _blockMap[x, y, z] = block;
         }
 
@@ -66,26 +63,25 @@ namespace World.Chunk {
             var z = Mathf.FloorToInt(pos.z);
 
             SetBlock(x, y, z, block);
-            UpdateChunk();
+            RenderChunk();
 
             // Update neighbour chunk TODO
             if (x == 0) {
                 UpdateNeighbourChunk(_coord.GetX() - 1, _coord.GetZ());
-            }
-            if (x == 15) {
+            } else if (x == 15) {
                 UpdateNeighbourChunk(_coord.GetX() + 1, _coord.GetZ());
             }
+
             if (z == 0) {
                 UpdateNeighbourChunk(_coord.GetX(), _coord.GetZ() - 1);
-            }
-            if (z == 15) {
+            } else if (z == 15) {
                 UpdateNeighbourChunk(_coord.GetX(), _coord.GetZ() + 1);
             }
         }
 
         private void UpdateNeighbourChunk(int x, int z) {
             var chunk = _world.GetChunk(x, z);
-            chunk?.UpdateChunk();
+            chunk?.RenderChunk();
         }
 
         public Block.Block GetBlock(int x, int y, int z) {
@@ -98,7 +94,7 @@ namespace World.Chunk {
 
         public ChunkCoord Coord => _coord;
 
-        private void UpdateChunk() {
+        public void RenderChunk() {
             ClearMeshData();
             for (int y = 0; y < VoxelData.ChunkHeight; y++) {
                 for (int x = 0; x < 16; x++) {
@@ -111,6 +107,7 @@ namespace World.Chunk {
                     }
                 }
             }
+
             CreateMesh();
         }
 
@@ -131,7 +128,7 @@ namespace World.Chunk {
         private bool IsBlockInChunk(int x, int y, int z) {
             return x >= 0 && x <= 15 && y >= 0 && y <= VoxelData.ChunkHeight - 1 && z >= 0 && z <= 15;
         }
-        
+
 
         private bool IsSolid(Vector3 pos) {
             var x = Mathf.FloorToInt(pos.x);
@@ -201,4 +198,5 @@ namespace World.Chunk {
         }
 
     }
+
 }
