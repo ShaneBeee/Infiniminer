@@ -108,14 +108,11 @@ namespace World.Entity {
             // apply vertical momentum
             _velocity += Vector3.up * (_verticalMomentum * Time.fixedDeltaTime);
 
-            if ((_velocity.z > 0 && Front) || (_velocity.z < 0 && Back)) {
-                _velocity.z = 0;
-            }
-
-            if ((_velocity.x > 0 && Right) || (_velocity.x < 0 && Left)) {
-                _velocity.x = 0;
-
-            }
+            // check if can move forward (if blocked by a block stop player)
+            if (_velocity.z > 0 && !CanMoveNorth()) _velocity.z = 0;
+            if (_velocity.z < 0 && !CanMoveSouth()) _velocity.z = 0;
+            if (_velocity.x > 0 && !CanMoveEast()) _velocity.x = 0;
+            if (_velocity.x < 0 && !CanMoveWest()) _velocity.x = 0;
 
             if (_velocity.y < 0) {
                 _velocity.y = CheckDownSpeed(_velocity.y);
@@ -216,54 +213,46 @@ namespace World.Entity {
             return upSpeed;
         }
 
-        private bool Front {
-            get {
-                var transformPosition = transform.position;
-                var x = transformPosition.x;
-                var y = transformPosition.y;
-                var z = transformPosition.z;
-                var width = playerWidth;
+        private const float Offset = 0.1f;
 
-                return world.CheckForBlock(x, y, z + width) || world.CheckForBlock(x, y + 1f, z + width);
-            }
+        private bool CanMoveNorth() {
+            var pos = transform.position;
+            var width = playerWidth;
+            var ne = pos + new Vector3(width, 0, width + Offset);
+            var nw = pos + new Vector3(-width, 0, width + Offset);
+
+            return !world.CheckForBlock(ne) && !world.CheckForBlock(nw) &&
+                   !world.CheckForBlock(ne + Vector3.up) && !world.CheckForBlock(nw + Vector3.up);
         }
 
-        private bool Back {
-            get {
-                var transformPosition = transform.position;
-                var x = transformPosition.x;
-                var y = transformPosition.y;
-                var z = transformPosition.z;
-                var width = playerWidth;
+        private bool CanMoveEast() {
+            var pos = transform.position;
+            var width = playerWidth;
+            var ne = pos + new Vector3(width + Offset, 0, width);
+            var se = pos + new Vector3(width + Offset, 0, -width);
 
-                return world.CheckForBlock(x, y, z - width) || world.CheckForBlock(x, y + 1f, z - width);
-            }
+            return !world.CheckForBlock(ne) && !world.CheckForBlock(se) &&
+                   !world.CheckForBlock(ne + Vector3.up) && !world.CheckForBlock(se + Vector3.up);
         }
 
-        private bool Left {
-            get {
-                var transformPosition = transform.position;
-                var x = transformPosition.x;
-                var y = transformPosition.y;
-                var z = transformPosition.z;
-                var width = playerWidth;
+        private bool CanMoveSouth() {
+            var pos = transform.position;
+            var width = playerWidth;
+            var sw = pos + new Vector3(-width, 0, -width - Offset);
+            var se = pos + new Vector3(width, 0, -width - Offset);
 
-                return world.CheckForBlock(x - width, y, z) ||
-                       world.CheckForBlock(x - width, y + 1f, z);
-            }
+            return !world.CheckForBlock(sw) && !world.CheckForBlock(se) &&
+                   !world.CheckForBlock(sw + Vector3.up) && !world.CheckForBlock(se + Vector3.up);
         }
 
-        private bool Right {
-            get {
-                var transformPosition = transform.position;
-                var x = transformPosition.x;
-                var y = transformPosition.y;
-                var z = transformPosition.z;
-                var width = playerWidth;
+        private bool CanMoveWest() {
+            var pos = transform.position;
+            var width = playerWidth;
+            var sw = pos + new Vector3(-width - Offset, 0, -width);
+            var nw = pos + new Vector3(-width - Offset, 0, width);
 
-                return world.CheckForBlock(x + width, y, z) ||
-                       world.CheckForBlock(x + width, y + 1f, z);
-            }
+            return !world.CheckForBlock(sw) && !world.CheckForBlock(nw) &&
+                   !world.CheckForBlock(sw + Vector3.up) && !world.CheckForBlock(nw + Vector3.up);
         }
 
     }
