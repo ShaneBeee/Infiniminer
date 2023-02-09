@@ -104,7 +104,7 @@ namespace World {
         }
 
         public Chunk.Chunk GetChunk(int x, int z) {
-            if (x >= _chunks.Length || z >= _chunks.Length) {
+            if (x >= _chunks.GetLength(0) || z >= _chunks.GetLength(1)) {
                 return null;
             }
 
