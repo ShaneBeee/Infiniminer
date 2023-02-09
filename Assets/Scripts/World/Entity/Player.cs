@@ -4,33 +4,21 @@ using World.Block;
 
 namespace World.Entity {
 
-    public class Player : MonoBehaviour {
-
-        public bool isGrounded;
-        public bool isSprinting;
-
-        private Transform _camera;
+    public class Player : Entity {
 
         // SCREENS
         [SerializeField] private GameObject menuScreen;
 
         // OBJECTS
-        [SerializeField] private World world;
+        private Transform _camera;
         [SerializeField] private Transform highlightBlock;
         [SerializeField] private Transform placeBlock;
-
+        
         // VALUES
-        [SerializeField] private float walkSpeed = 3f;
-        [SerializeField] private float sprintSpeed = 6f;
-        [SerializeField] private float jumpForce = 5f;
-        [SerializeField] private float gravity = -9.81f;
-
-        [SerializeField] private float playerWidth = 0.3f;
-        //[SerializeField] private float bounceTolerance = 0.1f;
-
         [SerializeField] private float checkIncrement = 0.1f;
         [SerializeField] private float reach = 8f;
-
+        
+        private bool _isSprinting;
         private float _horizontal;
         private float _vertical;
         private float _mouseHorizontal;
@@ -56,7 +44,7 @@ namespace World.Entity {
             transform.Rotate(Vector3.up * (_mouseHorizontal * 5.0f));
             _camera.Rotate(Vector3.right * (-_mouseVertical * 5.0f));
         }
-
+        
         private void FixedUpdate() {
             if (IsMenuOpen()) return;
 
@@ -97,7 +85,7 @@ namespace World.Entity {
             }
 
             // if sprinting
-            if (isSprinting) {
+            if (_isSprinting) {
                 _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) *
                             (Time.fixedDeltaTime * sprintSpeed);
             } else {
@@ -128,9 +116,9 @@ namespace World.Entity {
             _mouseVertical = Input.GetAxis("Mouse Y");
 
             if (Input.GetButtonDown("Sprint") && isGrounded) {
-                isSprinting = true;
+                _isSprinting = true;
             } else if (Input.GetButtonUp("Sprint")) {
-                isSprinting = false;
+                _isSprinting = false;
             }
 
             if (isGrounded && Input.GetButtonDown("Jump")) {
@@ -177,82 +165,6 @@ namespace World.Entity {
             highlightBlock.gameObject.SetActive(false);
             placeBlock.gameObject.SetActive(false);
 
-        }
-
-        private float CheckDownSpeed(float downSpeed) {
-            var transformPosition = transform.position;
-            var x = transformPosition.x;
-            var y = transformPosition.y;
-            var z = transformPosition.z;
-            var width = playerWidth;
-            if (world.CheckForBlock(x - width, y + downSpeed, z - width) ||
-                world.CheckForBlock(x + width, y + downSpeed, z - width) ||
-                world.CheckForBlock(x + width, y + downSpeed, z + width) ||
-                world.CheckForBlock(x - width, y + downSpeed, z + width)) {
-                isGrounded = true;
-                return 0;
-            }
-
-            isGrounded = false;
-            return downSpeed;
-        }
-
-        private float CheckUpSpeed(float upSpeed) {
-            var transformPosition = transform.position;
-            var x = transformPosition.x;
-            var y = transformPosition.y;
-            var z = transformPosition.z;
-            var width = playerWidth;
-            if (world.CheckForBlock(x - width, y + 2f + upSpeed, z - width) ||
-                world.CheckForBlock(x + width, y + 2f + upSpeed, z - width) ||
-                world.CheckForBlock(x + width, y + 2f + upSpeed, z + width) ||
-                world.CheckForBlock(x - width, y + 2f + upSpeed, z + width)) {
-                return 0;
-            }
-
-            return upSpeed;
-        }
-
-        private const float Offset = 0.1f;
-
-        private bool CanMoveNorth() {
-            var pos = transform.position;
-            var width = playerWidth;
-            var ne = pos + new Vector3(width, 0, width + Offset);
-            var nw = pos + new Vector3(-width, 0, width + Offset);
-
-            return !world.CheckForBlock(ne) && !world.CheckForBlock(nw) &&
-                   !world.CheckForBlock(ne + Vector3.up) && !world.CheckForBlock(nw + Vector3.up);
-        }
-
-        private bool CanMoveEast() {
-            var pos = transform.position;
-            var width = playerWidth;
-            var ne = pos + new Vector3(width + Offset, 0, width);
-            var se = pos + new Vector3(width + Offset, 0, -width);
-
-            return !world.CheckForBlock(ne) && !world.CheckForBlock(se) &&
-                   !world.CheckForBlock(ne + Vector3.up) && !world.CheckForBlock(se + Vector3.up);
-        }
-
-        private bool CanMoveSouth() {
-            var pos = transform.position;
-            var width = playerWidth;
-            var sw = pos + new Vector3(-width, 0, -width - Offset);
-            var se = pos + new Vector3(width, 0, -width - Offset);
-
-            return !world.CheckForBlock(sw) && !world.CheckForBlock(se) &&
-                   !world.CheckForBlock(sw + Vector3.up) && !world.CheckForBlock(se + Vector3.up);
-        }
-
-        private bool CanMoveWest() {
-            var pos = transform.position;
-            var width = playerWidth;
-            var sw = pos + new Vector3(-width - Offset, 0, -width);
-            var nw = pos + new Vector3(-width - Offset, 0, width);
-
-            return !world.CheckForBlock(sw) && !world.CheckForBlock(nw) &&
-                   !world.CheckForBlock(sw + Vector3.up) && !world.CheckForBlock(nw + Vector3.up);
         }
 
     }
