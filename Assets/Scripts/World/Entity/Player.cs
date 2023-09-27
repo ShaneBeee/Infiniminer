@@ -28,23 +28,15 @@ namespace World.Entity {
         private bool _jumpRequest;
 
         private void Start() {
-
             var component = gameObject.GetComponentInChildren<Camera>();
             if (component != null) {
                 _camera = component.transform;
             } else {
                 Debug.LogError("Camera on player == null");
             }
-
             LockCursor(true);
         }
 
-        private void LateUpdate() {
-            if (IsMenuOpen()) return;
-            transform.Rotate(Vector3.up * (_mouseHorizontal * 5.0f));
-            _camera.Rotate(Vector3.right * (-_mouseVertical * 5.0f));
-        }
-        
         private void FixedUpdate() {
             if (IsMenuOpen()) return;
 
@@ -60,6 +52,16 @@ namespace World.Entity {
             if (IsMenuOpen()) return;
             GetPlayerInput();
             PlaceCursorBlock();
+        }
+        
+        private void LateUpdate() {
+            if (IsMenuOpen()) return;
+            // Rotate player horizontal
+            transform.Rotate(Vector3.up * (_mouseHorizontal * 5.0f));
+            
+            // Rotate camera vertical
+            var rotY = Mathf.Clamp(_mouseVertical * 5.0f, -90f, 90f); 
+            _camera.localRotation = Quaternion.Euler(-rotY, 0f, 0f);
         }
 
         private bool IsMenuOpen() {
@@ -113,7 +115,7 @@ namespace World.Entity {
             _horizontal = Input.GetAxis("Horizontal");
             _vertical = Input.GetAxis("Vertical");
             _mouseHorizontal = Input.GetAxis("Mouse X");
-            _mouseVertical = Input.GetAxis("Mouse Y");
+            _mouseVertical += Input.GetAxis("Mouse Y");
 
             if (Input.GetButtonDown("Sprint") && isGrounded) {
                 _isSprinting = true;
