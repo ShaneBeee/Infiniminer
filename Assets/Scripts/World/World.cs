@@ -116,7 +116,6 @@ namespace World {
         }
 
         public Block.Block GetBlock(Vector3 pos) {
-
             var chunkX = Mathf.FloorToInt(pos.x / 16);
             var chunkZ = Mathf.FloorToInt(pos.z / 16);
             var chunk = GetChunk(chunkX, chunkZ);
@@ -129,6 +128,19 @@ namespace World {
             var z = Mathf.FloorToInt(pos.z) % 16;
 
             return chunk.GetBlock(x, y, z);
+        }
+
+        public void EditBlock(Vector3 pos, Block.Block block) {
+            var chunkX = Mathf.FloorToInt(pos.x / 16);
+            var chunkZ = Mathf.FloorToInt(pos.z / 16);
+            var chunk = GetChunk(chunkX, chunkZ);
+            if (chunk == null) {
+                return;
+            }
+            var x = Mathf.FloorToInt(pos.x) % 16;
+            var y = Mathf.FloorToInt(pos.y);
+            var z = Mathf.FloorToInt(pos.z) % 16;
+            chunk.EditBlock(new Vector3(x,y,z), block);
         }
 
         private bool IsChunkInWorld(int x, int z) {
