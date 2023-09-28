@@ -129,15 +129,9 @@ namespace World.Entity {
 
             if (highlightBlock.gameObject.activeSelf) {
                 if (Input.GetMouseButtonDown(0)) {
-                    var position = highlightBlock.position;
-                    var chunkX = Mathf.FloorToInt(position.x / 16);
-                    var chunkZ = Mathf.FloorToInt(position.z / 16);
-                    var chunk = world.GetChunk(chunkX, chunkZ);
-
-                    var blockX = Mathf.FloorToInt(position.x % 16);
-                    var blockY = Mathf.FloorToInt(position.y);
-                    var blockZ = Mathf.FloorToInt(position.z % 16);
-                    chunk.EditBlock(new Vector3(blockX, blockY, blockZ), Blocks.AIR);
+                    world.EditBlock(highlightBlock.position, Blocks.AIR);
+                } else if (Input.GetMouseButtonDown(1)) {
+                    world.EditBlock(placeBlock.position, Blocks.DIRT);
                 }
             }
         }
