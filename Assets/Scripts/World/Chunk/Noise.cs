@@ -19,7 +19,7 @@ namespace World.Chunk {
         }
 
         public static bool Get3DPerlin(Vector3 position, float offset, float scale, float threshold) {
-            // no longer a space... fuck of Sparky
+            // no longer a space... fuck off Sparky
             var x = (position.x + offset + 0.1f) * scale + SeedX;
             var y = (position.y + offset + 0.1f) * scale + SeedY;
             var z = (position.z + offset + 0.1f) * scale + SeedZ;
