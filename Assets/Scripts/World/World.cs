@@ -69,7 +69,7 @@ namespace World {
 
             foreach (var chunk in _chunks) {
                 slider.value = (float)loadedChunks++ / chunkCount;
-                chunk.RenderChunk();
+                chunk.chunkRenderer.RenderChunk();
                 yield return new WaitForSeconds(0.001f);
             }
 

@@ -1,49 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
-using World.Block;
 
 namespace World.Chunk {
     [SuppressMessage("ReSharper", "Unity.InefficientMultidimensionalArrayUsage")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Chunk {
 
-        private ChunkCoord _coord;
-        private GameObject _chunkObject;
-        private MeshRenderer _meshRenderer;
-        private MeshFilter _meshFilter;
+        private readonly ChunkCoord coord;
+        private readonly GameObject chunkObject;
+        internal readonly ChunkRenderer chunkRenderer;
 
-        private int _vertexIndex;
-        private readonly List<Vector3> _vertices = new();
-        private readonly List<int> _triangles = new();
-        private readonly List<Vector2> _uvs = new();
-
-        private readonly Block.Block[,,] _blockMap = new Block.Block[16, VoxelData.ChunkHeight, 16];
-        private World _world;
+        internal readonly Block.Block[,,] blockMap = new Block.Block[16, VoxelData.ChunkHeight, 16];
 
         public Chunk(int x, int z, World world) {
-            Init(new ChunkCoord(x, z), world);
-        }
-
-        public Chunk(ChunkCoord coord, World world) {
-            Init(coord, world);
-        }
-
-        private void Init(ChunkCoord coord, World world) {
-            _coord = coord;
-            _world = world;
-            _chunkObject = new GameObject();
-            _meshFilter = _chunkObject.AddComponent<MeshFilter>();
-            _meshRenderer = _chunkObject.AddComponent<MeshRenderer>();
-            _meshRenderer.material = world.material;
-            _chunkObject.transform.SetParent(world.transform);
-            _chunkObject.transform.position = new Vector3(coord.GetX() * 16, 0f, coord.GetZ() * 16);
-            _chunkObject.name = "Chunk{" + coord.GetX() + "," + coord.GetZ() + "}";
+            this.coord = new ChunkCoord(x, z);
+            this.World = world;
+            this.chunkObject = new GameObject();
+            this.chunkRenderer = new ChunkRenderer(this, this.chunkObject);
+            this.chunkObject.transform.SetParent(world.transform);
+            this.chunkObject.transform.position = new Vector3(coord.GetX() * 16, 0f, coord.GetZ() * 16);
+            this.chunkObject.name = "Chunk{" + coord.GetX() + "," + coord.GetZ() + "}";
 
             SetupChunk();
         }
 
-        public World World => _world;
+        public World World { get; }
 
         private void SetupChunk() {
             ChunkGenerator.PopulateBlocks(this);
@@ -54,7 +36,7 @@ namespace World.Chunk {
                 throw new ArgumentException($"SetBlock out of range: {x},{y},{z}");
             }
 
-            _blockMap[x, y, z] = block;
+            blockMap[x, y, z] = block;
         }
 
         public void EditBlock(Vector3 pos, Block.Block block) {
@@ -63,25 +45,8 @@ namespace World.Chunk {
             var z = Mathf.FloorToInt(pos.z);
 
             SetBlock(x, y, z, block);
-            RenderChunk();
-
-            // Update neighbour chunk TODO
-            if (x == 0) {
-                UpdateNeighbourChunk(_coord.GetX() - 1, _coord.GetZ());
-            } else if (x == 15) {
-                UpdateNeighbourChunk(_coord.GetX() + 1, _coord.GetZ());
-            }
-
-            if (z == 0) {
-                UpdateNeighbourChunk(_coord.GetX(), _coord.GetZ() - 1);
-            } else if (z == 15) {
-                UpdateNeighbourChunk(_coord.GetX(), _coord.GetZ() + 1);
-            }
-        }
-
-        private void UpdateNeighbourChunk(int x, int z) {
-            var chunk = _world.GetChunk(x, z);
-            chunk?.RenderChunk();
+            this.chunkRenderer.RenderChunk();
+            this.chunkRenderer.CheckNeighbour(x, z);
         }
 
         public Block.Block GetBlock(int x, int y, int z) {
@@ -89,58 +54,34 @@ namespace World.Chunk {
                 return null;
             }
 
-            return _blockMap[x, y, z];
+            return blockMap[x, y, z];
         }
 
-        public ChunkCoord Coord => _coord;
-
-        public void RenderChunk() {
-            ClearMeshData();
-            for (int y = 0; y < VoxelData.ChunkHeight; y++) {
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        var pos = new Vector3(x, y, z);
-                        var block = _blockMap[x, y, z];
-                        if (block != null && block != Blocks.AIR) {
-                            UpdateMeshData(pos);
-                        }
-                    }
-                }
-            }
-
-            CreateMesh();
-        }
-
-        private void ClearMeshData() {
-            _vertexIndex = 0;
-            _vertices.Clear();
-            _triangles.Clear();
-            _uvs.Clear();
-        }
+        public ChunkCoord Coord => coord;
 
         public bool isActive {
-            get => _chunkObject.activeSelf;
-            set => _chunkObject.SetActive(value);
+            get => chunkObject.activeSelf;
+            set => chunkObject.SetActive(value);
         }
 
-        public Vector3 Position => _chunkObject.transform.position;
+        public Vector3 Position => chunkObject.transform.position;
 
         private bool IsBlockInChunk(int x, int y, int z) {
             return x >= 0 && x <= 15 && y >= 0 && y <= VoxelData.ChunkHeight - 1 && z >= 0 && z <= 15;
         }
 
 
-        private bool IsSolid(Vector3 pos) {
+        internal bool IsSolid(Vector3 pos) {
             var x = Mathf.FloorToInt(pos.x);
             var y = Mathf.FloorToInt(pos.y);
             var z = Mathf.FloorToInt(pos.z);
 
-            if (!_world.IsBlockInWorld(pos + Position)) {
+            if (!World.IsBlockInWorld(pos + Position)) {
                 return false;
             }
 
             if (!IsBlockInChunk(x, y, z)) {
-                var block = _world.GetBlock(new Vector3(x, y, z) + Position);
+                var block = World.GetBlock(new Vector3(x, y, z) + Position);
                 if (block != null && block.IsSolid()) {
                     return true;
                 }
@@ -148,53 +89,7 @@ namespace World.Chunk {
                 return false;
             }
 
-            return _blockMap[x, y, z].IsSolid();
-        }
-
-        private void UpdateMeshData(Vector3 pos) {
-            for (int p = 0; p < 6; p++) {
-                // only draw if neighbouring block is not solid
-                if (IsSolid(pos + VoxelData.FaceChecks[p])) continue;
-
-                for (int v = 0; v < 4; v++) {
-                    _vertices.Add(pos + VoxelData.VoxelVertices[VoxelData.VoxelTriangles[p, v]]);
-                }
-
-                var block = _blockMap[Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z)];
-                AddTexture(block);
-
-                _triangles.Add(_vertexIndex);
-                _triangles.Add(_vertexIndex + 1);
-                _triangles.Add(_vertexIndex + 2);
-                _triangles.Add(_vertexIndex + 2);
-                _triangles.Add(_vertexIndex + 1);
-                _triangles.Add(_vertexIndex + 3);
-                _vertexIndex += 4;
-            }
-        }
-
-        private void CreateMesh() {
-            var mesh = new Mesh();
-            mesh.vertices = _vertices.ToArray();
-            mesh.triangles = _triangles.ToArray();
-            mesh.uv = _uvs.ToArray();
-
-            mesh.RecalculateNormals();
-            _meshFilter.mesh = mesh;
-        }
-
-        private void AddTexture(Block.Block block) {
-            float textureID = block.GetTextureId();
-            var normal = VoxelData.NormalizedBlockTextureSize;
-            var size = VoxelData.TextureAtlasSizeInBlocks;
-
-            var y = (size - 1 - Mathf.Floor(textureID / size)) / size;
-            var x = (textureID % size) / size;
-
-            _uvs.Add(new Vector2(x, y));
-            _uvs.Add(new Vector2(x, y + normal));
-            _uvs.Add(new Vector2(x + normal, y));
-            _uvs.Add(new Vector2(x + normal, y + normal));
+            return blockMap[x, y, z].IsSolid();
         }
 
     }
