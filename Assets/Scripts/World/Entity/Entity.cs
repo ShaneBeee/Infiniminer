@@ -11,9 +11,9 @@ namespace World.Entity {
         [SerializeField] protected float walkSpeed = 3f;
         [SerializeField] protected float sprintSpeed = 6f;
         [SerializeField] protected float jumpForce = 5f;
-        [SerializeField] protected float gravity = -9.81f;
+        [SerializeField] protected float gravity = 9.81f;
         [SerializeField] protected float entityWidth = 0.3f;
-        public bool isGrounded;
+        [SerializeField] public bool isGrounded;
 
         protected float CheckDownSpeed(float downSpeed) {
             var transformPosition = transform.position;

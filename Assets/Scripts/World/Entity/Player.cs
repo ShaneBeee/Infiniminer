@@ -4,48 +4,37 @@ using World.Block;
 
 namespace World.Entity {
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Player : Entity {
 
         // SCREENS
         [SerializeField] private GameObject menuScreen;
 
         // OBJECTS
-        private Transform _camera;
+        private new Camera camera;
         [SerializeField] private Transform highlightBlock;
         [SerializeField] private Transform placeBlock;
-        
+        private Rigidbody rigidBody;
+
         // VALUES
         [SerializeField] private float checkIncrement = 0.1f;
         [SerializeField] private float reach = 8f;
-        
-        private bool _isSprinting;
-        private float _horizontal;
-        private float _vertical;
+
+        private bool isSpringing;
         private float _mouseHorizontal;
         private float _mouseVertical;
-        private Vector3 _velocity;
-        private float _verticalMomentum;
-        private bool _jumpRequest;
 
         private void Start() {
-            var component = gameObject.GetComponentInChildren<Camera>();
-            if (component != null) {
-                _camera = component.transform;
+            var cameraObject = gameObject.GetComponentInChildren<Camera>();
+            if (cameraObject != null) {
+                this.camera = cameraObject;
             } else {
                 Debug.LogError("Camera on player == null");
             }
+
+            this.rigidBody = GetComponent<Rigidbody>();
+            this.rigidBody.useGravity = false;
             LockCursor(true);
-        }
-
-        private void FixedUpdate() {
-            if (IsMenuOpen()) return;
-
-            CalculateVelocity();
-            if (_jumpRequest) {
-                Jump();
-            }
-
-            transform.Translate(_velocity, Space.World);
         }
 
         private void Update() {
@@ -53,15 +42,36 @@ namespace World.Entity {
             GetPlayerInput();
             PlaceCursorBlock();
         }
-        
-        private void LateUpdate() {
+
+        private void FixedUpdate() {
             if (IsMenuOpen()) return;
+            var pull = Vector3.down * (gravity * rigidBody.mass);
+            rigidBody.AddForce(pull, ForceMode.Acceleration);
+        }
+
+        private void LateUpdate() {
+            if (IsMenuOpen()) {
+                rigidBody.velocity = new Vector3(0, 0, 0);
+                return;
+            }
+
             // Rotate player horizontal
             transform.Rotate(Vector3.up * (_mouseHorizontal * 5.0f));
-            
+
             // Rotate camera vertical
-            var rotY = Mathf.Clamp(_mouseVertical * 5.0f, -90f, 90f); 
-            _camera.localRotation = Quaternion.Euler(-rotY, 0f, 0f);
+            var rotY = Mathf.Clamp(_mouseVertical * 5.0f, -90f, 90f);
+            camera.transform.localRotation = Quaternion.Euler(-rotY, 0f, 0f);
+
+            // Move player
+            var vel = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * walkSpeed;
+            vel.y = rigidBody.velocity.y;
+            vel = transform.TransformDirection(vel);
+            rigidBody.velocity = vel;
+
+            if (isGrounded && Input.GetKeyDown(KeyCode.Space)) {
+                rigidBody.AddForce(Vector3.up * (jumpForce * 100));
+                isGrounded = false;
+            }
         }
 
         private bool IsMenuOpen() {
@@ -73,65 +83,22 @@ namespace World.Entity {
             Cursor.visible = !locked;
         }
 
-        private void Jump() {
-            _verticalMomentum = jumpForce;
-            isGrounded = false;
-            _jumpRequest = false;
-        }
-
-        [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
-        private void CalculateVelocity() {
-            // Affect vertical momentum with gravity
-            if (_verticalMomentum > gravity) {
-                _verticalMomentum += Time.fixedDeltaTime * gravity;
-            }
-
-            // if sprinting
-            if (_isSprinting) {
-                _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) *
-                            (Time.fixedDeltaTime * sprintSpeed);
-            } else {
-                _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) *
-                            (Time.fixedDeltaTime * walkSpeed);
-            }
-
-            // apply vertical momentum
-            _velocity += Vector3.up * (_verticalMomentum * Time.fixedDeltaTime);
-
-            // check if can move forward (if blocked by a block stop player)
-            if (_velocity.z > 0 && !CanMoveNorth()) _velocity.z = 0;
-            if (_velocity.z < 0 && !CanMoveSouth()) _velocity.z = 0;
-            if (_velocity.x > 0 && !CanMoveEast()) _velocity.x = 0;
-            if (_velocity.x < 0 && !CanMoveWest()) _velocity.x = 0;
-
-            if (_velocity.y < 0) {
-                _velocity.y = CheckDownSpeed(_velocity.y);
-            } else if (_velocity.y > 0) {
-                _velocity.y = CheckUpSpeed(_velocity.y);
-            }
-        }
-
         private void GetPlayerInput() {
-            _horizontal = Input.GetAxis("Horizontal");
-            _vertical = Input.GetAxis("Vertical");
             _mouseHorizontal = Input.GetAxis("Mouse X");
             _mouseVertical += Input.GetAxis("Mouse Y");
 
             if (Input.GetButtonDown("Sprint") && isGrounded) {
-                _isSprinting = true;
+                isSpringing = true;
             } else if (Input.GetButtonUp("Sprint")) {
-                _isSprinting = false;
+                isSpringing = false;
             }
 
-            if (isGrounded && Input.GetButtonDown("Jump")) {
-                _jumpRequest = true;
-            }
-
+            // Place/Break blocks
             if (highlightBlock.gameObject.activeSelf) {
                 if (Input.GetMouseButtonDown(0)) {
-                    world.EditBlock(highlightBlock.position, Blocks.AIR);
+                    world.SetBlock(highlightBlock.position, Blocks.AIR);
                 } else if (Input.GetMouseButtonDown(1)) {
-                    world.EditBlock(placeBlock.position, Blocks.DIRT);
+                    world.SetBlock(placeBlock.position, Blocks.DIRT);
                 }
             }
         }
@@ -141,7 +108,7 @@ namespace World.Entity {
             var lastPos = new Vector3();
 
             while (step < reach) {
-                var pos = _camera.position + (_camera.forward * step);
+                var pos = camera.transform.position + (camera.transform.forward * step);
 
                 if (world.CheckForBlock(pos)) {
                     highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y),
@@ -160,7 +127,6 @@ namespace World.Entity {
 
             highlightBlock.gameObject.SetActive(false);
             placeBlock.gameObject.SetActive(false);
-
         }
 
     }

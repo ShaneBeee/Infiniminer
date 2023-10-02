@@ -14,6 +14,7 @@ namespace World {
         [SerializeField] private Slider slider;
 
         public Material material;
+        public PhysicsMaterial2D physicsMaterial;
         public Block.Block[] BlockTypes;
 
         private Text debugText;
@@ -80,6 +81,7 @@ namespace World {
             SetSpawn();
             slider.value = 1.0f;
             yield return new WaitForSeconds(0.5f);
+            player.SetActive(true);
             player.transform.position = spawnPosition;
             loadingScreenCanvas.SetActive(false);
         }
@@ -93,7 +95,7 @@ namespace World {
             for (int i = VoxelData.ChunkHeight - 1; i > 0; i--) {
                 spawn.y = i;
                 if (GetBlock(spawn) == Blocks.AIR) continue;
-                spawn.y += 1;
+                spawn.y += 1.5f;
                 spawnPosition = spawn;
                 return;
             }
@@ -116,8 +118,8 @@ namespace World {
         }
 
         public Block.Block GetBlock(Vector3 pos) {
-            var chunkX = Mathf.FloorToInt(pos.x / 16);
-            var chunkZ = Mathf.FloorToInt(pos.z / 16);
+            var chunkX = Mathf.FloorToInt(pos.x) >> 4;
+            var chunkZ = Mathf.FloorToInt(pos.z) >> 4;
             var chunk = GetChunk(chunkX, chunkZ);
             if (chunk == null) {
                 return null;
@@ -130,7 +132,7 @@ namespace World {
             return chunk.GetBlock(x, y, z);
         }
 
-        public void EditBlock(Vector3 pos, Block.Block block) {
+        public void SetBlock(Vector3 pos, Block.Block block) {
             var chunkX = Mathf.FloorToInt(pos.x / 16);
             var chunkZ = Mathf.FloorToInt(pos.z / 16);
             var chunk = GetChunk(chunkX, chunkZ);
@@ -140,7 +142,7 @@ namespace World {
             var x = Mathf.FloorToInt(pos.x) % 16;
             var y = Mathf.FloorToInt(pos.y);
             var z = Mathf.FloorToInt(pos.z) % 16;
-            chunk.EditBlock(new Vector3(x,y,z), block);
+            chunk.SetBlock(new Vector3(x,y,z), block);
         }
 
         private bool IsChunkInWorld(int x, int z) {

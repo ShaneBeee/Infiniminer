@@ -48,7 +48,7 @@ namespace World.Chunk {
                             }
                         }
 
-                        chunk.SetBlock(x, y, z, block);
+                        chunk.SetBlockType(x, y, z, block);
                     }
                 }
             }

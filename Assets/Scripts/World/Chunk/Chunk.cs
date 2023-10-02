@@ -31,7 +31,7 @@ namespace World.Chunk {
             ChunkGenerator.PopulateBlocks(this);
         }
 
-        public void SetBlock(int x, int y, int z, Block.Block block) {
+        public void SetBlockType(int x, int y, int z, Block.Block block) {
             if (x < 0 || x > 15 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > 15) {
                 throw new ArgumentException($"SetBlock out of range: {x},{y},{z}");
             }
@@ -39,12 +39,12 @@ namespace World.Chunk {
             blockMap[x, y, z] = block;
         }
 
-        public void EditBlock(Vector3 pos, Block.Block block) {
+        public void SetBlock(Vector3 pos, Block.Block block) {
             var x = Mathf.FloorToInt(pos.x);
             var y = Mathf.FloorToInt(pos.y);
             var z = Mathf.FloorToInt(pos.z);
 
-            SetBlock(x, y, z, block);
+            SetBlockType(x, y, z, block);
             this.chunkRenderer.RenderChunk();
             this.chunkRenderer.CheckNeighbour(x, z);
         }
