@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace World.Biome {
@@ -6,15 +7,15 @@ namespace World.Biome {
 
         private string biomeName;
         public BiomeProperties Properties { get; }
-        public Lode[] lodes = new Lode[0];
+        public OreBlob[] lodes = Array.Empty<OreBlob>();
 
         public Biome(string name, BiomeProperties properties) {
             biomeName = name;
             Properties = properties;
         }
 
-        public Biome AddLode(Lode lode) {
-            var lodeList = new List<Lode>(lodes) {lode};
+        public Biome AddOreBlob(OreBlob oreBlob) {
+            var lodeList = new List<OreBlob>(lodes) { oreBlob };
             lodes = lodeList.ToArray();
             return this;
         }

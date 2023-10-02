@@ -14,8 +14,8 @@ namespace World.Chunk {
             return Mathf.PerlinNoise(x, y);
         }
 
-        public static bool Get3DPerlin(Vector3 position, Lode lode) {
-            return Get3DPerlin(position, lode.noiseOffset, lode.scale, lode.threshold);
+        public static bool Get3DPerlin(Vector3 position, OreBlob oreBlob) {
+            return Get3DPerlin(position, oreBlob.noiseOffset, oreBlob.scale, oreBlob.threshold);
         }
 
         public static bool Get3DPerlin(Vector3 position, float offset, float scale, float threshold) {

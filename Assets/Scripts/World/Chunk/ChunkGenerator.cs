@@ -39,10 +39,10 @@ namespace World.Chunk {
 
                         var pos3 = new Vector3(x + chunkWorldX, y, z + chunkWorldZ);
                         if (block == Blocks.ROCK) {
-                            foreach (var lode in biome.lodes) {
-                                if (y > lode.minHeight && y < lode.maxHeight) {
-                                    if (Noise.Get3DPerlin(pos3, lode)) {
-                                        block = lode.Block;
+                            foreach (var oreBlob in biome.lodes) {
+                                if (y > oreBlob.minHeight && y < oreBlob.maxHeight) {
+                                    if (Noise.Get3DPerlin(pos3, oreBlob)) {
+                                        block = oreBlob.Block;
                                     }
                                 }
                             }
