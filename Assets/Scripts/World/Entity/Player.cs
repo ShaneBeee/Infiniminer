@@ -14,6 +14,7 @@ namespace World.Entity {
         private new Camera camera;
         [SerializeField] private Transform highlightBlock;
         [SerializeField] private Transform placeBlock;
+        [SerializeField] private Transform playerBody;
         private Rigidbody rigidBody;
 
         // VALUES
@@ -32,7 +33,7 @@ namespace World.Entity {
                 Debug.LogError("Camera on player == null");
             }
 
-            this.rigidBody = GetComponent<Rigidbody>();
+            this.rigidBody = gameObject.GetComponent<Rigidbody>();
             this.rigidBody.useGravity = false;
             LockCursor(true);
         }
@@ -56,7 +57,7 @@ namespace World.Entity {
             }
 
             // Rotate player horizontal
-            transform.Rotate(Vector3.up * (_mouseHorizontal * 5.0f));
+            playerBody.Rotate(Vector3.up * (_mouseHorizontal * 5.0f));
 
             // Rotate camera vertical
             var rotY = Mathf.Clamp(_mouseVertical * 5.0f, -90f, 90f);
@@ -65,12 +66,12 @@ namespace World.Entity {
             // Move player
             var vel = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * walkSpeed;
             vel.y = rigidBody.velocity.y;
-            vel = transform.TransformDirection(vel);
+            vel = playerBody.TransformDirection(vel);
             rigidBody.velocity = vel;
 
             if (isGrounded && Input.GetKeyDown(KeyCode.Space)) {
                 rigidBody.AddForce(Vector3.up * (jumpForce * 100));
-                isGrounded = false;
+                //isGrounded = false;
             }
         }
 
