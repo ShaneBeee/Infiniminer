@@ -10,7 +10,7 @@ namespace World.Entity {
         // VALUES
         [SerializeField] protected float walkSpeed = 7f;
         [SerializeField] protected float sprintSpeed = 6f;
-        [SerializeField] protected float jumpForce = 5f;
+        [SerializeField] protected float jumpForce = 12f;
         [SerializeField] protected float gravity = 9.81f;
         [SerializeField] public bool isGrounded;
     }

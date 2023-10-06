@@ -1915,7 +1915,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.45, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2249,8 +2249,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 0.9, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!4 &1577222650
 Transform:
   m_ObjectHideFlags: 0
@@ -2282,9 +2282,9 @@ MonoBehaviour:
   world: {fileID: 862594289}
   walkSpeed: 7
   sprintSpeed: 6
-  jumpForce: 5
+  jumpForce: 12
   gravity: 9.81
-  isGrounded: 0
+  isGrounded: 1
   menuScreen: {fileID: 2081968861}
   highlightBlock: {fileID: 1501646476}
   placeBlock: {fileID: 679009623}
@@ -2299,7 +2299,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1577222648}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 2.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
