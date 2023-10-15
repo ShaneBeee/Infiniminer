@@ -21,7 +21,9 @@ namespace World.Entity {
         [SerializeField] private float checkIncrement = 0.1f;
         [SerializeField] private float reach = 8f;
 
+#pragma warning disable CS0414 // Field is assigned but its value is never used
         private bool isSpringing;
+#pragma warning restore CS0414 // Field is assigned but its value is never used
         private float _mouseHorizontal;
         private float _mouseVertical;
 
