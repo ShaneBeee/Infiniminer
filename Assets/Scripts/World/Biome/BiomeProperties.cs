@@ -1,9 +1,12 @@
+using World.Block;
+
 namespace World.Biome {
     public class BiomeProperties {
 
         private int _solidGroundHeight = 32; // below this value is always solid ground (think SeaLevel)
         private int _terrainHeight = 64; // solid to highest ground
         private float _terrainScale = 0.1f;
+        private Block.Block groundBlock = Blocks.DIRT;
 
         internal BiomeProperties() {
         }
@@ -33,6 +36,15 @@ namespace World.Biome {
 
         public float GetTerrainScale() {
             return _terrainScale;
+        }
+
+        public BiomeProperties GroundBlock(Block.Block block) {
+            this.groundBlock = block;
+            return this;
+        }
+
+        public Block.Block GetGroundBlock() {
+            return this.groundBlock;
         }
         
     }
