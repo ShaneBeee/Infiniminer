@@ -3,7 +3,7 @@ using UnityEngine;
 public static class VoxelData {
 
     public const int ChunkHeight = 128;
-    public const int WorldSizeInChunks = 8;
+    public const int WorldSizeInChunks = 2;
     public const int WorldSizeInBlocks = WorldSizeInChunks * 16;
 
     public const int TextureAtlasSizeInBlocks = 2;

@@ -105,7 +105,7 @@ namespace World.Chunk {
             };
 
             mesh.RecalculateNormals();
-            this.meshFilter.mesh = mesh;
+            this.meshFilter.sharedMesh = mesh;
             this.meshCollider.sharedMesh = mesh;
         }
 

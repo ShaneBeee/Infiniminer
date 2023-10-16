@@ -8,7 +8,7 @@ namespace World.Chunk {
     public class Chunk {
 
         private readonly ChunkCoord coord;
-        private readonly GameObject chunkObject;
+        public readonly GameObject chunkObject;
         internal readonly ChunkRenderer chunkRenderer;
 
         internal readonly Block.Block[,,] blockMap = new Block.Block[16, VoxelData.ChunkHeight, 16];

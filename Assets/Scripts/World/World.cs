@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using World.Block;
+using Random = UnityEngine.Random;
 
 namespace World {
     public class World : MonoBehaviour {
@@ -12,17 +14,16 @@ namespace World {
         [SerializeField] private GameObject debugScreenCanvas;
         [SerializeField] private GameObject menuScreenCanvas;
         [SerializeField] private Slider slider;
-
-        public Material material;
+        [SerializeField] internal Material material;
 
         private Text debugText;
-
+        private int activeChunks;
+        private Vector3 spawnPosition;
 
         private readonly Chunk.Chunk[,] chunks =
             new Chunk.Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
 
-        private int activeChunks;
-
+        // Unity Methods
         private void Start() {
             Random.InitState(seed);
             loadingScreenCanvas.SetActive(true);
@@ -33,7 +34,7 @@ namespace World {
                 Debug.LogError("Debug text == null");
             }
 
-            StartCoroutine(GenerateChunks());
+            StartCoroutine(SetupWorld());
         }
 
         private void Update() {
@@ -49,8 +50,26 @@ namespace World {
             }
         }
 
-        public int Seed => seed;
-        private Vector3 spawnPosition;
+        // Internal Methods
+        private IEnumerator SetupWorld() {
+            yield return StartCoroutine(GenerateChunks());
+            StartCoroutine(SpawnInPlayer());
+        }
+
+        public void GenChunksForEditor() {
+            StartCoroutine(GenerateChunks());
+        }
+
+        public void ClearChunksFromEditor() {
+            Debug.Log("Preparing to destroy chunks!");
+            foreach (var chunk in chunks) {
+                if (chunk != null) {
+                    DestroyImmediate(chunk.chunkObject);
+                }
+            }
+
+            Array.Clear(chunks, 0, chunks.Length);
+        }
 
         // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator GenerateChunks() {
@@ -72,7 +91,6 @@ namespace World {
                 yield return new WaitForSeconds(0.001f);
             }
 
-            StartCoroutine(SpawnInPlayer());
         }
 
         private IEnumerator SpawnInPlayer() {
