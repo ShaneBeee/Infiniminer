@@ -21,9 +21,7 @@ namespace World.Entity {
         [SerializeField] private float checkIncrement = 0.1f;
         [SerializeField] private float reach = 8f;
 
-#pragma warning disable CS0414 // Field is assigned but its value is never used
         private bool isSpringing;
-#pragma warning restore CS0414 // Field is assigned but its value is never used
         private float _mouseHorizontal;
         private float _mouseVertical;
 
@@ -66,8 +64,14 @@ namespace World.Entity {
             camera.transform.localRotation = Quaternion.Euler(-rotY, 0f, 0f);
 
             // Move player
-            var vel = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * walkSpeed;
+            var speed = isSpringing ? sprintSpeed : walkSpeed;
+            var vel = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * speed;
             vel.y = rigidBody.velocity.y;
+            // If the player stops, stop their sprinting
+            if (vel.z <= walkSpeed) {
+                isSpringing = false;
+            }
+
             vel = playerBody.TransformDirection(vel);
             rigidBody.velocity = vel;
 
@@ -91,9 +95,7 @@ namespace World.Entity {
             _mouseVertical += Input.GetAxis("Mouse Y");
 
             if (Input.GetButtonDown("Sprint") && isGrounded) {
-                isSpringing = true;
-            } else if (Input.GetButtonUp("Sprint")) {
-                isSpringing = false;
+                isSpringing = !isSpringing;
             }
 
             // Place/Break blocks

@@ -1362,7 +1362,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &679009623
 Transform:
   m_ObjectHideFlags: 0
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e325abc4da1b641bd8ec81f52bba3ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSize: 2
+  worldSize: 5
   seed: 234234
   player: {fileID: 1577222648}
   screenManager: {fileID: 10876885}
@@ -2015,7 +2015,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1501646476
 Transform:
   m_ObjectHideFlags: 0
@@ -2282,7 +2282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   world: {fileID: 862594289}
   walkSpeed: 7
-  sprintSpeed: 6
+  sprintSpeed: 14
   jumpForce: 12
   gravity: 9.81
   isGrounded: 1
