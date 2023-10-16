@@ -1,25 +1,24 @@
 using System;
 using System.Collections;
+using Screens;
 using UnityEngine;
-using UnityEngine.UI;
 using World.Block;
 using Random = UnityEngine.Random;
 
 namespace World {
     public class World : MonoBehaviour {
-        
-        [Header("World Variables")]
-        [SerializeField,Tooltip("Size of world in chunks"),Min(2)] private int worldSize;
+
+        [Header("World Variables")] [SerializeField, Tooltip("Size of world in chunks"), Min(2)]
+        private int worldSize;
+
         [SerializeField] private int seed;
-        [Header("Game Objects")]
-        [SerializeField] private GameObject player;
-        [SerializeField] private GameObject loadingScreenCanvas;
-        [SerializeField] private GameObject debugScreenCanvas;
-        [SerializeField] private GameObject menuScreenCanvas;
-        [SerializeField] private Slider slider;
+
+        [Header("Game Objects")] [SerializeField]
+        private GameObject player;
+
+        [SerializeField] private ScreenManager screenManager;
         [SerializeField] internal Material material;
 
-        private Text debugText;
         private int activeChunks;
         private Vector3 spawnPosition;
 
@@ -28,28 +27,7 @@ namespace World {
         // Unity Methods
         private void Start() {
             Random.InitState(seed);
-            loadingScreenCanvas.SetActive(true);
-            debugScreenCanvas.SetActive(false);
-            menuScreenCanvas.SetActive(false);
-            debugText = debugScreenCanvas.GetComponentInChildren<Text>();
-            if (debugText == null) {
-                Debug.LogError("Debug text == null");
-            }
-
             StartCoroutine(SetupWorld());
-        }
-
-        private void Update() {
-            if (Input.GetKeyDown(KeyCode.F3)) {
-                debugScreenCanvas.SetActive(!debugScreenCanvas.activeSelf);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Escape)) {
-                var menuActive = menuScreenCanvas.activeSelf;
-                menuScreenCanvas.SetActive(!menuActive);
-                Cursor.lockState = !menuActive ? CursorLockMode.None : CursorLockMode.Locked;
-                Cursor.visible = !menuActive;
-            }
         }
 
         // Internal Methods
@@ -83,13 +61,13 @@ namespace World {
                 for (int z = 0; z < size; z++) {
                     CreateNewChunk(x, z);
                     activeChunks++;
-                    slider.value = (float)loadedChunks++ / chunkCount;
+                    screenManager.UpdateProgressBar((float)loadedChunks++ / chunkCount);
                     yield return new WaitForSeconds(0.001f);
                 }
             }
 
             foreach (var chunk in chunks) {
-                slider.value = (float)loadedChunks++ / chunkCount;
+                screenManager.UpdateProgressBar((float)loadedChunks++ / chunkCount);
                 chunk.chunkRenderer.RenderChunk();
                 yield return new WaitForSeconds(0.001f);
             }
@@ -98,11 +76,11 @@ namespace World {
 
         private IEnumerator SpawnInPlayer() {
             SetSpawn();
-            slider.value = 1.0f;
+            screenManager.UpdateProgressBar(1.0f);
             yield return new WaitForSeconds(0.5f);
             player.SetActive(true);
             player.transform.position = spawnPosition;
-            loadingScreenCanvas.SetActive(false);
+            screenManager.LoadingScreenEnabled(false);
         }
 
         private void CreateNewChunk(int x, int z) {

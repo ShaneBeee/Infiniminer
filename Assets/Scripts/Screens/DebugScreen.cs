@@ -2,37 +2,35 @@ using UnityEngine;
 using UnityEngine.UI;
 using World.Entity;
 
-public class DebugScreen : MonoBehaviour {
-    
-    [SerializeField] private Player _player;
-    
-    private Text debugText;
-    private float frameRate;
-    private float timer;
-    
-    // Start is called before the first frame update
-    void Start() {
-        debugText = GetComponentInChildren<Text>();
-        if (debugText == null) {
-            Debug.LogError("DebugText == null");
-        }
-    }
+namespace Screens {
+    public class DebugScreen : MonoBehaviour {
 
-    // Update is called once per frame
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.F3)) {
-            gameObject.SetActive(!gameObject.activeSelf);
+        [SerializeField] private Player player;
+
+        private Text debugText;
+        private float frameRate;
+        private float timer;
+
+        private void Start() {
+            debugText = GetComponentInChildren<Text>();
+            if (debugText == null) {
+                Debug.LogError("DebugText == null");
+            }
         }
 
-        if (timer > 1f) {
-            frameRate = (int) (1f / Time.unscaledDeltaTime);
-            timer = 0;
-        } else {
-            timer += Time.deltaTime;
-        }
+        private void Update() {
+            // Only prepare if active
+            if (!gameObject.activeSelf) return;
 
-        if (gameObject.activeSelf) {
-            var position = _player.transform.position;
+            if (timer > 1f) {
+                frameRate = (int)(1f / Time.unscaledDeltaTime);
+                timer = 0;
+            } else {
+                timer += Time.deltaTime;
+            }
+
+            if (!gameObject.activeSelf) return;
+            var position = player.transform.position;
             var x = position.x.ToString("0.00");
             var y = position.y.ToString("0.00");
             var z = position.z.ToString("0.00");
@@ -40,6 +38,7 @@ public class DebugScreen : MonoBehaviour {
                              "FPS: " + frameRate + "\n" +
                              "XYZ: " + x + ", " + y + ", " + z + "\n";
         }
+
     }
-    
+
 }

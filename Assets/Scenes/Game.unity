@@ -129,6 +129,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 10876884}
+  - component: {fileID: 10876885}
   m_Layer: 0
   m_Name: Screens
   m_TagString: Untagged
@@ -154,6 +155,22 @@ Transform:
   - {fileID: 382642570}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &10876885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10876883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7f81db65baf84620b4ffccb622802bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadingScreenCanvas: {fileID: 713842180}
+  debugScreenCanvas: {fileID: 382642566}
+  menuScreenCanvas: {fileID: 2081968861}
+  slider: {fileID: 367501591}
 --- !u!1 &20888493
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,7 +1011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c22d44dcca92a4a568e3eb122d51d6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 1577222651}
+  player: {fileID: 1577222651}
 --- !u!1 &448664495
 GameObject:
   m_ObjectHideFlags: 0
@@ -1593,10 +1610,7 @@ MonoBehaviour:
   worldSize: 2
   seed: 234234
   player: {fileID: 1577222648}
-  loadingScreenCanvas: {fileID: 713842180}
-  debugScreenCanvas: {fileID: 382642566}
-  menuScreenCanvas: {fileID: 2081968861}
-  slider: {fileID: 367501591}
+  screenManager: {fileID: 10876885}
   material: {fileID: 2100000, guid: a439ed409d09d437a8d38c345db67d87, type: 2}
 --- !u!4 &862594290
 Transform:
