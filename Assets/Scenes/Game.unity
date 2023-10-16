@@ -1597,7 +1597,6 @@ MonoBehaviour:
   menuScreenCanvas: {fileID: 2081968861}
   slider: {fileID: 367501591}
   material: {fileID: 2100000, guid: a439ed409d09d437a8d38c345db67d87, type: 2}
-  physicsMaterial: {fileID: 0}
 --- !u!4 &862594290
 Transform:
   m_ObjectHideFlags: 0
@@ -2304,7 +2303,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &1599225876
 GameObject:
   m_ObjectHideFlags: 0
