@@ -7,17 +7,17 @@ namespace World.Entity {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Player : Entity {
 
-        // SCREENS
-        [SerializeField] private GameObject menuScreen;
-
         // OBJECTS
-        private new Camera camera;
+        [Header("Player Game Objects")]
+        [SerializeField] private GameObject menuScreen;
         [SerializeField] private Transform highlightBlock;
         [SerializeField] private Transform placeBlock;
         [SerializeField] private Transform playerBody;
+        private new Camera camera;
         private Rigidbody rigidBody;
 
         // VALUES
+        [Header("Player Values")]
         [SerializeField] private float checkIncrement = 0.1f;
         [SerializeField] private float reach = 8f;
 
