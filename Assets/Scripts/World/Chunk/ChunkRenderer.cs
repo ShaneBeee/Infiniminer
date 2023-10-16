@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using World.Block;
 
 namespace World.Chunk {
@@ -26,6 +27,7 @@ namespace World.Chunk {
             };
             var meshRenderer = chunkObject.AddComponent<MeshRenderer>();
             meshRenderer.material = this.chunk.World.material;
+            meshRenderer.shadowCastingMode = ShadowCastingMode.TwoSided;
         }
 
         public void RenderChunk() {
