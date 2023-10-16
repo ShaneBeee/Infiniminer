@@ -1,4 +1,5 @@
 using UnityEngine;
+using World.Biome;
 using World.Block;
 
 namespace World.Chunk {
@@ -13,7 +14,8 @@ namespace World.Chunk {
                 for (var x = 0; x < 16; x++) {
                     for (var z = 0; z < 16; z++) {
 
-                        var biome = Biome.Biomes.DEFAULT;
+                        var pos = new Vector2(x + chunkWorldX, z + chunkWorldZ);
+                        var biome = Biomes.DEFAULT;
                         var block = Blocks.ROCK;
 
                         var biomeTerrainHeight = biome.Properties.GetTerrainHeight();
@@ -22,13 +24,13 @@ namespace World.Chunk {
 
                         /* INITIAL PASS */
 
-                        var pos = new Vector2(x + chunkWorldX, z + chunkWorldZ);
+                        
                         var terrainHeight =
                             Mathf.FloorToInt(biomeTerrainHeight * Noise.Get2DPerlin(pos, 0, biomeTerrainScale)) +
                             biomeSolidHeight;
 
                         if (y == terrainHeight) {
-                            block = Blocks.DIRT;
+                            block = biome.Properties.GetGroundBlock();
                         } else if (y < terrainHeight && y > terrainHeight - 4) {
                             block = Blocks.DIRT;
                         } else if (y > terrainHeight) {
