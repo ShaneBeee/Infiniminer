@@ -14,13 +14,11 @@ namespace World {
         [SerializeField] private Slider slider;
 
         public Material material;
-        public PhysicsMaterial2D physicsMaterial;
-        public Block.Block[] BlockTypes;
 
         private Text debugText;
 
 
-        private readonly Chunk.Chunk[,] _chunks =
+        private readonly Chunk.Chunk[,] chunks =
             new Chunk.Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
 
         private int activeChunks;
@@ -68,7 +66,7 @@ namespace World {
                 }
             }
 
-            foreach (var chunk in _chunks) {
+            foreach (var chunk in chunks) {
                 slider.value = (float)loadedChunks++ / chunkCount;
                 chunk.chunkRenderer.RenderChunk();
                 yield return new WaitForSeconds(0.001f);
@@ -87,14 +85,14 @@ namespace World {
         }
 
         private void CreateNewChunk(int x, int z) {
-            _chunks[x, z] = new Chunk.Chunk(x, z, this);
+            chunks[x, z] = new Chunk.Chunk(x, z, this);
         }
 
         private void SetSpawn() {
             var spawn = new Vector3(16, 0, 16);
             for (int i = VoxelData.ChunkHeight - 1; i > 0; i--) {
                 spawn.y = i;
-                if (GetBlock(spawn) == Blocks.AIR) continue;
+                if (GetBlock(spawn.ToVector3Int()) == Blocks.AIR) continue;
                 spawn.y += 1.5f;
                 spawnPosition = spawn;
                 return;
@@ -106,7 +104,7 @@ namespace World {
         }
 
         public Chunk.Chunk GetChunk(int x, int z) {
-            if (x >= _chunks.GetLength(0) || z >= _chunks.GetLength(1)) {
+            if (x >= chunks.GetLength(0) || z >= chunks.GetLength(1)) {
                 return null;
             }
 
@@ -114,10 +112,10 @@ namespace World {
                 return null;
             }
 
-            return _chunks[x, z];
+            return chunks[x, z];
         }
 
-        public Block.Block GetBlock(Vector3 pos) {
+        public Block.Block GetBlock(Vector3Int pos) {
             var chunkX = Mathf.FloorToInt(pos.x) >> 4;
             var chunkZ = Mathf.FloorToInt(pos.z) >> 4;
             var chunk = GetChunk(chunkX, chunkZ);
@@ -132,47 +130,36 @@ namespace World {
             return chunk.GetBlock(x, y, z);
         }
 
-        public void SetBlock(Vector3 pos, Block.Block block) {
-            var chunkX = Mathf.FloorToInt(pos.x / 16);
-            var chunkZ = Mathf.FloorToInt(pos.z / 16);
+        public void SetBlock(Vector3Int pos, Block.Block block) {
+            var chunkX = Mathf.FloorToInt((float)pos.x / 16);
+            var chunkZ = Mathf.FloorToInt((float)pos.z / 16);
             var chunk = GetChunk(chunkX, chunkZ);
             if (chunk == null) {
                 return;
             }
-            var x = Mathf.FloorToInt(pos.x) % 16;
-            var y = Mathf.FloorToInt(pos.y);
-            var z = Mathf.FloorToInt(pos.z) % 16;
-            chunk.SetBlock(new Vector3(x,y,z), block);
+
+            var x = pos.x % 16;
+            var y = pos.y;
+            var z = pos.z % 16;
+            chunk.SetBlock(new Vector3Int(x, y, z), block);
         }
 
         private bool IsChunkInWorld(int x, int z) {
             var sizeInChunks = VoxelData.WorldSizeInChunks - 1;
-            if (x > 0 && x < sizeInChunks && z > 0 && z < sizeInChunks) {
-                return true;
-            }
-
-            return false;
+            return x > 0 && x < sizeInChunks && z > 0 && z < sizeInChunks;
         }
 
-        public bool IsBlockInWorld(Vector3 pos) {
-            var maxBlocks = VoxelData.WorldSizeInBlocks;
-            var chunkHeight = VoxelData.ChunkHeight;
+        public bool IsBlockInWorld(Vector3Int pos) {
+            const int maxBlocks = VoxelData.WorldSizeInBlocks;
+            const int chunkHeight = VoxelData.ChunkHeight;
             var x = pos.x;
             var y = pos.y;
             var z = pos.z;
-            if (x >= 0 && x < maxBlocks && y >= 0 && y < chunkHeight && z >= 0 && z < maxBlocks) {
-                return true;
-            }
-
-            return false;
+            return x is >= 0 and < maxBlocks && y is >= 0 and < chunkHeight && z is >= 0 and < maxBlocks;
         }
 
-        public bool CheckForBlock(Vector3 pos) {
-            return CheckForBlock(pos.x, pos.y, pos.z);
-        }
-
-        public bool CheckForBlock(float x, float y, float z) {
-            var block = GetBlock(new Vector3(x, y, z));
+        public bool CheckForBlock(Vector3Int pos) {
+            var block = GetBlock(pos);
             return block != null && block.IsSolid();
         }
 

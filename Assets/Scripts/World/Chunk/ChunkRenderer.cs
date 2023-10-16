@@ -9,7 +9,6 @@ namespace World.Chunk {
     public class ChunkRenderer {
 
         private readonly Chunk chunk;
-        private GameObject chunkObject;
         private readonly MeshFilter meshFilter;
         private readonly MeshCollider meshCollider;
         private int vertexIndex;
@@ -19,7 +18,6 @@ namespace World.Chunk {
 
         public ChunkRenderer(Chunk chunk, GameObject chunkObject) {
             this.chunk = chunk;
-            this.chunkObject = chunkObject;
             this.meshFilter = chunkObject.AddComponent<MeshFilter>();
             this.meshCollider = this.meshFilter.AddComponent<MeshCollider>();
             this.meshCollider.material = new PhysicMaterial {
@@ -35,7 +33,7 @@ namespace World.Chunk {
             for (int y = 0; y < VoxelData.ChunkHeight; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        var pos = new Vector3(x, y, z);
+                        var pos = new Vector3Int(x, y, z);
                         var block = this.chunk.blockMap[x, y, z];
                         if (block != null && block != Blocks.AIR) {
                             UpdateMeshData(pos);
@@ -76,7 +74,7 @@ namespace World.Chunk {
             uvs.Clear();
         }
 
-        private void UpdateMeshData(Vector3 pos) {
+        private void UpdateMeshData(Vector3Int pos) {
             for (int p = 0; p < 6; p++) {
                 // only draw if neighbouring block is not solid
                 if (this.chunk.IsSolid(pos + VoxelData.FaceChecks[p])) continue;

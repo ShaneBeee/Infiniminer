@@ -39,7 +39,7 @@ namespace World.Chunk {
 
                         /* SECOND PASS */
 
-                        var pos3 = new Vector3(x + chunkWorldX, y, z + chunkWorldZ);
+                        var pos3 = new Vector3Int(x + chunkWorldX, y, z + chunkWorldZ);
                         if (block == Blocks.ROCK) {
                             foreach (var oreBlob in biome.lodes) {
                                 if (y > oreBlob.minHeight && y < oreBlob.maxHeight) {

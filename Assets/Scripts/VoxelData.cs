@@ -12,23 +12,23 @@ public static class VoxelData {
 
 
     public static readonly Vector3[] VoxelVertices = new Vector3[8] {
-        new Vector3(0.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 1.0f, 1.0f),
-        new Vector3(0.0f, 1.0f, 1.0f)
+        new(0.0f, 0.0f, 0.0f),
+        new(1.0f, 0.0f, 0.0f),
+        new(1.0f, 1.0f, 0.0f),
+        new(0.0f, 1.0f, 0.0f),
+        new(0.0f, 0.0f, 1.0f),
+        new(1.0f, 0.0f, 1.0f),
+        new(1.0f, 1.0f, 1.0f),
+        new(0.0f, 1.0f, 1.0f)
     };
 
-    public static readonly Vector3[] FaceChecks = new Vector3[6] {
-        new Vector3(0.0f, 0.0f, -1.0f),
-        new Vector3(0.0f, 0.0f, 1.0f),
-        new Vector3(0.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, -1.0f, 0.0f),
-        new Vector3(-1.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.0f, 0.0f)
+    public static readonly Vector3Int[] FaceChecks = new Vector3Int[6] {
+        new(0, 0, -1),
+        new(0, 0, 1),
+        new(0, 1, 0),
+        new(0, -1, 0),
+        new(-1, 0, 0),
+        new(1, 0, 0)
     };
 
     public static readonly int[,] VoxelTriangles = new int[6, 4] {
@@ -42,10 +42,10 @@ public static class VoxelData {
     };
 
     public static readonly Vector2[] VoxelUvs = new Vector2[4] {
-        new Vector2(0.0f, 0.0f),
-        new Vector2(0.0f, 1.0f),
-        new Vector2(1.0f, 0.0f),
-        new Vector2(1.0f, 1.0f)
+        new(0.0f, 0.0f),
+        new(0.0f, 1.0f),
+        new(1.0f, 0.0f),
+        new(1.0f, 1.0f)
     };
 
 }

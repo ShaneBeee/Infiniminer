@@ -14,4 +14,16 @@ internal static class Extensions {
             Mathf.Round(vector3.z * multiplier) / multiplier);
     }
 
+    /// <summary>
+    /// Convert to a Vector3Int
+    /// </summary>
+    /// <param name="vector3"></param>
+    /// <returns></returns>
+    public static Vector3Int ToVector3Int(this Vector3 vector3) {
+        var x = Mathf.FloorToInt(vector3.x);
+        var y = Mathf.FloorToInt(vector3.y);
+        var z = Mathf.FloorToInt(vector3.z);
+        return new Vector3Int(x, y, z);
+    }
+
 }

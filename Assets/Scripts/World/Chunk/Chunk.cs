@@ -39,14 +39,10 @@ namespace World.Chunk {
             blockMap[x, y, z] = block;
         }
 
-        public void SetBlock(Vector3 pos, Block.Block block) {
-            var x = Mathf.FloorToInt(pos.x);
-            var y = Mathf.FloorToInt(pos.y);
-            var z = Mathf.FloorToInt(pos.z);
-
-            SetBlockType(x, y, z, block);
+        public void SetBlock(Vector3Int pos, Block.Block block) {
+            SetBlockType(pos.x, pos.y, pos.z, block);
             this.chunkRenderer.RenderChunk();
-            this.chunkRenderer.CheckNeighbour(x, z);
+            this.chunkRenderer.CheckNeighbour(pos.x, pos.z);
         }
 
         public Block.Block GetBlock(int x, int y, int z) {
@@ -71,17 +67,17 @@ namespace World.Chunk {
         }
 
 
-        internal bool IsSolid(Vector3 pos) {
-            var x = Mathf.FloorToInt(pos.x);
-            var y = Mathf.FloorToInt(pos.y);
-            var z = Mathf.FloorToInt(pos.z);
+        internal bool IsSolid(Vector3Int pos) {
+            var x = pos.x;
+            var y = pos.y;
+            var z = pos.z;
 
-            if (!World.IsBlockInWorld(pos + Position)) {
+            if (!World.IsBlockInWorld(pos + Position.ToVector3Int())) {
                 return false;
             }
 
             if (!IsBlockInChunk(x, y, z)) {
-                var block = World.GetBlock(new Vector3(x, y, z) + Position);
+                var block = World.GetBlock(new Vector3Int(x, y, z) + Position.ToVector3Int());
                 if (block != null && block.IsSolid()) {
                     return true;
                 }

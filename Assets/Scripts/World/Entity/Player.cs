@@ -99,9 +99,9 @@ namespace World.Entity {
             // Place/Break blocks
             if (highlightBlock.gameObject.activeSelf) {
                 if (Input.GetMouseButtonDown(0)) {
-                    world.SetBlock(highlightBlock.position, Blocks.AIR);
+                    world.SetBlock(highlightBlock.position.ToVector3Int(), Blocks.AIR);
                 } else if (Input.GetMouseButtonDown(1)) {
-                    world.SetBlock(placeBlock.position, Blocks.DIRT);
+                    world.SetBlock(placeBlock.position.ToVector3Int(), Blocks.DIRT);
                 }
             }
         }
@@ -111,9 +111,10 @@ namespace World.Entity {
             var lastPos = new Vector3();
 
             while (step < reach) {
-                var pos = camera.transform.position + (camera.transform.forward * step);
+                var transform1 = camera.transform;
+                var pos = transform1.position + (transform1.forward * step);
 
-                if (world.CheckForBlock(pos)) {
+                if (world.CheckForBlock(pos.ToVector3Int())) {
                     highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y),
                         Mathf.FloorToInt(pos.z));
                     placeBlock.position = lastPos;
