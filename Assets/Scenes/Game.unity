@@ -1590,6 +1590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e325abc4da1b641bd8ec81f52bba3ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldSize: 2
   seed: 234234
   player: {fileID: 1577222648}
   loadingScreenCanvas: {fileID: 713842180}

@@ -7,8 +7,11 @@ using Random = UnityEngine.Random;
 
 namespace World {
     public class World : MonoBehaviour {
-
+        
+        [Header("World Variables")]
+        [SerializeField,Tooltip("Size of world in chunks"),Min(2)] private int worldSize;
         [SerializeField] private int seed;
+        [Header("Game Objects")]
         [SerializeField] private GameObject player;
         [SerializeField] private GameObject loadingScreenCanvas;
         [SerializeField] private GameObject debugScreenCanvas;
@@ -20,8 +23,7 @@ namespace World {
         private int activeChunks;
         private Vector3 spawnPosition;
 
-        private readonly Chunk.Chunk[,] chunks =
-            new Chunk.Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
+        private Chunk.Chunk[,] chunks;
 
         // Unity Methods
         private void Start() {
@@ -73,8 +75,9 @@ namespace World {
 
         // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator GenerateChunks() {
+            chunks ??= new Chunk.Chunk[worldSize, worldSize];
             var loadedChunks = 0;
-            var size = VoxelData.WorldSizeInChunks;
+            var size = worldSize;
             var chunkCount = size * size * 2;
             for (int x = 0; x < size; x++) {
                 for (int z = 0; z < size; z++) {
@@ -163,17 +166,17 @@ namespace World {
         }
 
         private bool IsChunkInWorld(int x, int z) {
-            var sizeInChunks = VoxelData.WorldSizeInChunks - 1;
+            var sizeInChunks = worldSize - 1;
             return x > 0 && x < sizeInChunks && z > 0 && z < sizeInChunks;
         }
 
         public bool IsBlockInWorld(Vector3Int pos) {
-            const int maxBlocks = VoxelData.WorldSizeInBlocks;
+            int maxBlocks = worldSize * 16;
             const int chunkHeight = VoxelData.ChunkHeight;
             var x = pos.x;
             var y = pos.y;
             var z = pos.z;
-            return x is >= 0 and < maxBlocks && y is >= 0 and < chunkHeight && z is >= 0 and < maxBlocks;
+            return x >= 0 && x < maxBlocks && y >= 0 && y < chunkHeight && z >= 0 && z < maxBlocks;
         }
 
         public bool CheckForBlock(Vector3Int pos) {
