@@ -8,20 +8,25 @@ namespace World.Entity {
     public class Player : Entity {
 
         // OBJECTS
-        [Header("Player Game Objects")]
-        [SerializeField] private GameObject menuScreen;
+        [Header("Player Game Objects")] [SerializeField]
+        private GameObject menuScreen;
+
         [SerializeField] private Transform highlightBlock;
         [SerializeField] private Transform placeBlock;
         [SerializeField] private Transform playerBody;
         private new Camera camera;
         private Rigidbody rigidBody;
+        private BoxCollider playerCollider;
 
         // VALUES
-        [Header("Player Values")]
-        [SerializeField] private float checkIncrement = 0.1f;
-        [SerializeField] private float reach = 8f;
+        [Header("Player Values")] [SerializeField]
+        private float checkIncrement = 0.1f;
 
-        private bool isSpringing;
+        [SerializeField] private float reach = 8f;
+        [SerializeField] private Gamemode gamemode;
+
+        private bool isSprinting;
+        private bool isFlying;
         private float _mouseHorizontal;
         private float _mouseVertical;
 
@@ -36,18 +41,28 @@ namespace World.Entity {
             this.rigidBody = gameObject.GetComponent<Rigidbody>();
             this.rigidBody.useGravity = false;
             LockCursor(true);
+
+            this.playerCollider = GetComponent<BoxCollider>();
+            if (gamemode == Gamemode.SPECTATOR) {
+                this.playerCollider.enabled = false;
+            }
         }
 
         private void Update() {
             if (IsMenuOpen()) return;
             GetPlayerInput();
-            PlaceCursorBlock();
+            if (gamemode != Gamemode.SPECTATOR) {
+                PlaceCursorBlock();
+            }
+
         }
 
         private void FixedUpdate() {
             if (IsMenuOpen()) return;
-            var pull = Vector3.down * (gravity * rigidBody.mass);
-            rigidBody.AddForce(pull, ForceMode.Acceleration);
+            if (gamemode != Gamemode.SPECTATOR && !isFlying) {
+                var pull = Vector3.down * (gravity * rigidBody.mass);
+                rigidBody.AddForce(pull, ForceMode.Acceleration);
+            }
         }
 
         private void LateUpdate() {
@@ -64,20 +79,32 @@ namespace World.Entity {
             camera.transform.localRotation = Quaternion.Euler(-rotY, 0f, 0f);
 
             // Move player
-            var speed = isSpringing ? sprintSpeed : walkSpeed;
+            var speed = isSprinting ? sprintSpeed : walkSpeed;
             var vel = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * speed;
             vel.y = rigidBody.velocity.y;
             // If the player stops, stop their sprinting
             if (vel.z <= walkSpeed) {
-                isSpringing = false;
+                isSprinting = false;
             }
 
             vel = playerBody.TransformDirection(vel);
             rigidBody.velocity = vel;
 
-            if (isGrounded && Input.GetKeyDown(KeyCode.Space)) {
-                rigidBody.AddForce(Vector3.up * (jumpForce * 100));
-                //isGrounded = false;
+            if (isGrounded && Input.GetKey(KeyCode.Space)) {
+                if (gamemode == Gamemode.SPECTATOR || (gamemode == Gamemode.CREATIVE && isFlying)) {
+                    var pos = rigidBody.position;
+                    pos.y += 0.1f;
+                    rigidBody.Move(pos, Quaternion.identity);
+                } else {
+                    isGrounded = false;
+                    rigidBody.AddForce(Vector3.up * (jumpForce * 100));
+                }
+            } else if (Input.GetKey(KeyCode.LeftShift)) {
+                if (gamemode == Gamemode.SPECTATOR || (gamemode == Gamemode.CREATIVE && isFlying)) {
+                    var pos = rigidBody.position;
+                    pos.y -= 0.1f;
+                    rigidBody.Move(pos, Quaternion.identity);
+                }
             }
         }
 
@@ -94,8 +121,8 @@ namespace World.Entity {
             _mouseHorizontal = Input.GetAxis("Mouse X");
             _mouseVertical += Input.GetAxis("Mouse Y");
 
-            if (Input.GetButtonDown("Sprint") && isGrounded) {
-                isSpringing = !isSpringing;
+            if (Input.GetKeyDown(KeyCode.LeftControl)) {
+                isSprinting = !isSprinting;
             }
 
             // Place/Break blocks
