@@ -2283,7 +2283,7 @@ MonoBehaviour:
   world: {fileID: 862594289}
   walkSpeed: 7
   sprintSpeed: 14
-  jumpForce: 12
+  jumpForce: 10
   gravity: 9.81
   isGrounded: 1
   menuScreen: {fileID: 2081968861}
@@ -2292,7 +2292,7 @@ MonoBehaviour:
   playerBody: {fileID: 2082272291}
   checkIncrement: 0.1
   reach: 8
-  gamemode: 2
+  gamemode: 0
 --- !u!54 &1577222652
 Rigidbody:
   m_ObjectHideFlags: 0

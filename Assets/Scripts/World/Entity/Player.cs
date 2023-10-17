@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using World.Block;
@@ -59,9 +60,38 @@ namespace World.Entity {
 
         private void FixedUpdate() {
             if (IsMenuOpen()) return;
+            // Apply gravity
             if (gamemode != Gamemode.SPECTATOR && !isFlying) {
                 var pull = Vector3.down * (gravity * rigidBody.mass);
                 rigidBody.AddForce(pull, ForceMode.Acceleration);
+            }
+            
+            // Check if player is on ground
+            var playerBlockPos = transform.position.ToVector3Int();
+            var blockBelow = playerBlockPos + Vector3Int.down;
+            if (world.GetBlock(blockBelow) != Blocks.AIR &&
+                Math.Abs((transform.position.y) - playerBlockPos.y) < 0.01) {
+                isGrounded = true;
+            } else {
+                isGrounded = false;
+            }
+
+            // Handle jumping
+            if (isGrounded && Input.GetKey(KeyCode.Space)) {
+                if (gamemode == Gamemode.SPECTATOR || (gamemode == Gamemode.CREATIVE && isFlying)) {
+                    var pos = rigidBody.position;
+                    pos.y += 0.1f;
+                    rigidBody.Move(pos, Quaternion.identity);
+                } else {
+                    isGrounded = false;
+                    rigidBody.AddForce(Vector3.up * (jumpForce * 100));
+                }
+            } else if (Input.GetKey(KeyCode.LeftShift)) {
+                if (gamemode == Gamemode.SPECTATOR || (gamemode == Gamemode.CREATIVE && isFlying)) {
+                    var pos = rigidBody.position;
+                    pos.y -= 0.1f;
+                    rigidBody.Move(pos, Quaternion.identity);
+                }
             }
         }
 
@@ -89,23 +119,6 @@ namespace World.Entity {
 
             vel = playerBody.TransformDirection(vel);
             rigidBody.velocity = vel;
-
-            if (isGrounded && Input.GetKey(KeyCode.Space)) {
-                if (gamemode == Gamemode.SPECTATOR || (gamemode == Gamemode.CREATIVE && isFlying)) {
-                    var pos = rigidBody.position;
-                    pos.y += 0.1f;
-                    rigidBody.Move(pos, Quaternion.identity);
-                } else {
-                    isGrounded = false;
-                    rigidBody.AddForce(Vector3.up * (jumpForce * 100));
-                }
-            } else if (Input.GetKey(KeyCode.LeftShift)) {
-                if (gamemode == Gamemode.SPECTATOR || (gamemode == Gamemode.CREATIVE && isFlying)) {
-                    var pos = rigidBody.position;
-                    pos.y -= 0.1f;
-                    rigidBody.Move(pos, Quaternion.identity);
-                }
-            }
         }
 
         private bool IsMenuOpen() {
