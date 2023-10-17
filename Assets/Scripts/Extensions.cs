@@ -21,7 +21,7 @@ internal static class Extensions {
     /// <returns></returns>
     public static Vector3Int ToVector3Int(this Vector3 vector3) {
         var x = Mathf.FloorToInt(vector3.x);
-        var y = Mathf.FloorToInt(vector3.y);
+        var y = Mathf.FloorToInt(vector3.y + 0.0001f);
         var z = Mathf.FloorToInt(vector3.z);
         return new Vector3Int(x, y, z);
     }
