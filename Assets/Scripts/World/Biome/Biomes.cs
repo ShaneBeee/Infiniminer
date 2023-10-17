@@ -7,8 +7,7 @@ namespace World.Biome {
     public static class Biomes {
 
         public static readonly Biome DEFAULT = GetDefault();
-        public static readonly Biome TNT = GetTNTBiome();
-        public static readonly Biome STONE = GetStoneBiome();
+        public static readonly Biome CAVE_TEST = GetCaveTest();
 
         private static Biome GetDefault() {
             return new Biome("default",
@@ -25,34 +24,18 @@ namespace World.Biome {
                 );
         }
 
-        private static Biome GetTNTBiome() {
+        private static Biome GetCaveTest() {
             return new Biome("tnt",
                     new BiomeProperties()
                         .SolidGroundHeight(42)
                         .TerrainHeight(12)
                         .TerrainScale(0.25f)
-                        .GroundBlock(Blocks.TNT))
-                .AddOreBlob(new OreBlob("diamond", Blocks.DIAMOND)
+                        .GroundBlock(Blocks.DIRT))
+                .AddOreBlob(new OreBlob("air", Blocks.AIR)
                     .MinHeight(10)
-                    .MaxHeight(20)
+                    .MaxHeight(70)
                     .Scale(0.1f)
-                    .Threshold(0.5f)
-                    .NoiseOffset(0f)
-                );
-        }
-        
-        private static Biome GetStoneBiome() {
-            return new Biome("stone",
-                    new BiomeProperties()
-                        .SolidGroundHeight(42)
-                        .TerrainHeight(12)
-                        .TerrainScale(0.25f)
-                        .GroundBlock(Blocks.ROCK))
-                .AddOreBlob(new OreBlob("diamond", Blocks.DIAMOND)
-                    .MinHeight(10)
-                    .MaxHeight(20)
-                    .Scale(0.1f)
-                    .Threshold(0.5f)
+                    .Threshold(0.4f)
                     .NoiseOffset(0f)
                 );
         }
