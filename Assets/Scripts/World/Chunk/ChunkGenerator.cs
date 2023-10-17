@@ -3,19 +3,31 @@ using World.Biome;
 using World.Block;
 
 namespace World.Chunk {
-    public static class ChunkGenerator {
+    public class ChunkGenerator {
 
-        internal static void PopulateBlocks(Chunk chunk) {
+        private const int TerrainMaxHeight = VoxelData.ChunkHeight / 2;
+        private static float[,] noiseMap;
+        private readonly Chunk chunk;
+
+        public ChunkGenerator(Chunk chunk) {
+            this.chunk = chunk;
+            noiseMap ??= Noise.GenerateNoiseMap(chunk.World.worldSize, 100, 4, 0.1f, 5.5f);
+        }
+
+        public void PopulateBlocks() {
             var coord = chunk.Coord;
             var chunkWorldX = coord.GetX() * 16;
             var chunkWorldZ = coord.GetZ() * 16;
+
+
+            var biome = Biomes.DEFAULT;
 
             for (var y = 0; y < VoxelData.ChunkHeight; y++) {
                 for (var x = 0; x < 16; x++) {
                     for (var z = 0; z < 16; z++) {
 
                         var pos = new Vector2(x + chunkWorldX, z + chunkWorldZ);
-                        var biome = Biomes.DEFAULT;
+
                         var block = Blocks.ROCK;
 
                         var biomeTerrainHeight = biome.Properties.GetTerrainHeight();
@@ -24,9 +36,8 @@ namespace World.Chunk {
 
                         /* INITIAL PASS */
 
-                        
                         var terrainHeight =
-                            Mathf.FloorToInt(biomeTerrainHeight * Noise.Get2DPerlin(pos, 0, biomeTerrainScale)) +
+                            Mathf.FloorToInt((noiseMap[x + chunkWorldX, z + chunkWorldZ]) * biomeTerrainHeight) +
                             biomeSolidHeight;
 
                         if (y == terrainHeight) {
@@ -42,10 +53,9 @@ namespace World.Chunk {
                         var pos3 = new Vector3Int(x + chunkWorldX, y, z + chunkWorldZ);
                         if (block == Blocks.ROCK) {
                             foreach (var oreBlob in biome.lodes) {
-                                if (y > oreBlob.minHeight && y < oreBlob.maxHeight) {
-                                    if (Noise.Get3DPerlin(pos3, oreBlob)) {
-                                        block = oreBlob.Block;
-                                    }
+                                if (y <= oreBlob.minHeight || y >= oreBlob.maxHeight) continue;
+                                if (Noise.Get3DPerlin(pos3, oreBlob)) {
+                                    block = oreBlob.Block;
                                 }
                             }
                         }

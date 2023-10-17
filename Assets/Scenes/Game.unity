@@ -1607,8 +1607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e325abc4da1b641bd8ec81f52bba3ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSize: 5
-  seed: 234234
+  worldSize: 10
+  seed: 3324
   player: {fileID: 1577222648}
   screenManager: {fileID: 10876885}
   material: {fileID: 2100000, guid: a439ed409d09d437a8d38c345db67d87, type: 2}

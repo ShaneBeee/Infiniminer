@@ -9,7 +9,7 @@ namespace World {
     public class World : MonoBehaviour {
 
         [Header("World Variables")] [SerializeField, Tooltip("Size of world in chunks"), Min(2)]
-        private int worldSize;
+        internal int worldSize;
 
         [SerializeField] private int seed;
 

@@ -28,7 +28,8 @@ namespace World.Chunk {
         public World World { get; }
 
         private void SetupChunk() {
-            ChunkGenerator.PopulateBlocks(this);
+            var generator = new ChunkGenerator(this);
+            generator.PopulateBlocks();
         }
 
         public void SetBlockType(int x, int y, int z, Block.Block block) {
