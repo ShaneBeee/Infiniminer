@@ -1,14 +1,18 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
+using World.Entity;
 
 namespace Screens {
     public class MenuScreen : MonoBehaviour {
 
+        [SerializeField] private Player player;
+        [SerializeField] private Dropdown gamemode;
+
         public void CloseMenu() {
-            var menuActive = gameObject.activeSelf;
             gameObject.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            player.SetGamemode((Gamemode)gamemode.value);
+            player.LockCursor(true);
         }
 
         public void CloseGame() {

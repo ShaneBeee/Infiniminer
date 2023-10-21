@@ -5,17 +5,18 @@ namespace World.Entity {
     public class Entity : MonoBehaviour {
 
         // OBJECTS
-        [Header("Entity Game Objects")]
-        [SerializeField] protected World world;
+        [Header("Entity Game Objects")] 
+        [SerializeField] internal World world;
 
         // VALUES
-        [Header("Entity Values")]
-        [SerializeField] protected float walkSpeed = 7f;
-        [SerializeField] protected float sprintSpeed = 14f;
-        [SerializeField] protected float jumpForce = 12f;
-        [SerializeField] protected float gravity = 9.81f;
-        [SerializeField] public bool isGrounded;
-        
+        [Header("Entity Values")] 
+        [SerializeField] internal float walkSpeed = 7f;
+
+        [SerializeField] internal float sprintSpeed = 14f;
+        [SerializeField] internal float jumpForce = 12f;
+        [SerializeField] internal float gravity = 9.81f;
+        internal bool isGrounded;
+
     }
 
 }
