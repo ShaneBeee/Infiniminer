@@ -17,6 +17,14 @@ namespace World.Entity {
         [SerializeField] internal float gravity = 9.81f;
         internal bool isGrounded;
 
+        /// <summary>
+        /// Teleport the entity to a new position
+        /// </summary>
+        /// <param name="pos">new position</param>
+        public void Teleport(Vector3 pos) {
+            transform.position = pos;
+        }
+
     }
 
 }

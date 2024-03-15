@@ -968,7 +968,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.875
+  m_Value: 0.98
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1344,7 +1344,7 @@ RectTransform:
   m_Father: {fileID: 1917459781}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.875, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2004,8 +2004,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldSize: 10
-  seed: 1111
-  player: {fileID: 1577222648}
+  seed: 234325345
+  player: {fileID: 1577222651}
   screenManager: {fileID: 10876885}
   material: {fileID: 2100000, guid: a439ed409d09d437a8d38c345db67d87, type: 2}
 --- !u!4 &862594290
