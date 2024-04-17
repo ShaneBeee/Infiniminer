@@ -29,6 +29,10 @@ namespace World {
 
         private Chunk.Chunk[,] chunks;
 
+        public int GetSeed() {
+            return seed;
+        }
+
         // Unity Methods
         private void Start() {
             Random.InitState(seed);
