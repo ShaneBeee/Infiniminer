@@ -13,7 +13,7 @@ namespace World.Biome {
             return new Biome("default",
                     new BiomeProperties()
                         .SolidGroundHeight(42)
-                        .TerrainHeight(5)
+                        .TerrainHeight(12)
                         .TerrainScale(0.25f))
                 .AddOreBlob(new OreBlob("diamond", Blocks.DIAMOND)
                     .MinHeight(10)
