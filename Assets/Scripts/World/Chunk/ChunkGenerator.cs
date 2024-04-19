@@ -1,17 +1,23 @@
 using UnityEngine;
+using Util;
 using World.Biome;
 using World.Block;
 
 namespace World.Chunk {
     public class ChunkGenerator {
-
-        private const int TerrainMaxHeight = VoxelData.ChunkHeight / 2;
-        private static float[,] noiseMap;
+        private static FastNoiseLite noiseGenerator;
         private readonly Chunk chunk;
+        private const float scale = 10;
 
         public ChunkGenerator(Chunk chunk) {
             this.chunk = chunk;
-            noiseMap ??= Noise.GenerateNoiseMap(chunk.World.worldSize, 100, 4, 0.1f, 5.5f);
+            if (noiseGenerator != null) return;
+            noiseGenerator = new FastNoiseLite(chunk.World.GetSeed());
+            noiseGenerator.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            noiseGenerator.SetFractalType(FastNoiseLite.FractalType.FBm);
+            noiseGenerator.SetFractalOctaves(2);
+            noiseGenerator.SetFrequency(0.1f);
+            noiseGenerator.SetFractalLacunarity(5);
         }
 
         public void PopulateBlocks() {
@@ -25,20 +31,11 @@ namespace World.Chunk {
             for (var y = 0; y < VoxelData.ChunkHeight; y++) {
                 for (var x = 0; x < 16; x++) {
                     for (var z = 0; z < 16; z++) {
-
-                        var pos = new Vector2(x + chunkWorldX, z + chunkWorldZ);
-
                         var block = Blocks.ROCK;
 
-                        var biomeTerrainHeight = biome.Properties.GetTerrainHeight();
-                        var biomeTerrainScale = biome.Properties.GetTerrainScale();
-                        var biomeSolidHeight = biome.Properties.GetSolidGroundHeight();
+                        /* INITIAL PASS - SURFACE */
 
-                        /* INITIAL PASS */
-
-                        var terrainHeight =
-                            Mathf.FloorToInt((noiseMap[x + chunkWorldX, z + chunkWorldZ]) * biomeTerrainHeight) +
-                            biomeSolidHeight;
+                        var terrainHeight = GetTerrainHeight(x, z, biome);
 
                         if (y == terrainHeight) {
                             block = biome.Properties.GetGroundBlock();
@@ -48,13 +45,13 @@ namespace World.Chunk {
                             block = Blocks.AIR;
                         }
 
-                        /* SECOND PASS */
+                        /* SECONDARY PASS - ORE BLOBS */
 
-                        var pos3 = new Vector3Int(x + chunkWorldX, y, z + chunkWorldZ);
+                        var worldPos = new Vector3(x + chunkWorldX, y, z + chunkWorldZ);
                         if (block == Blocks.ROCK) {
                             foreach (var oreBlob in biome.lodes) {
                                 if (y <= oreBlob.minHeight || y >= oreBlob.maxHeight) continue;
-                                if (Noise.Get3DPerlin(pos3, oreBlob)) {
+                                if (Noise.Get3DPerlin(worldPos, oreBlob)) {
                                     block = oreBlob.Block;
                                 }
                             }
@@ -66,6 +63,13 @@ namespace World.Chunk {
             }
         }
 
+        private int GetTerrainHeight(int x, int z, Biome.Biome biome) {
+            var chunkWorldX = chunk.Coord.GetX() * 16;
+            var chunkWorldZ = chunk.Coord.GetZ() * 16;
+            var biomeTerrainHeight = biome.Properties.GetTerrainHeight();
+            var biomeSolidHeight = biome.Properties.GetSolidGroundHeight();
+            var noise = (noiseGenerator.GetNoise((x + chunkWorldX)/ scale, (z + chunkWorldZ) / scale) + 1) * biomeTerrainHeight;
+            return Mathf.FloorToInt(noise) + biomeSolidHeight;
+        }
     }
-
 }
