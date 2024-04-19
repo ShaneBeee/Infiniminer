@@ -20,7 +20,7 @@ namespace World.Entity {
         internal float checkIncrement = 0.1f;
 
         [SerializeField] internal float reach = 8f;
-        internal Gamemode gamemode = Gamemode.CREATIVE;
+        [SerializeField] internal Gamemode gamemode;
 
         internal bool isSprinting;
         internal bool isFlying;

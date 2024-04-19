@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,10 @@ namespace Screens {
 
         [SerializeField] private Player player;
         [SerializeField] private Dropdown gamemode;
+
+        private void Start() {
+            gamemode.value = (int) player.gamemode;
+        }
 
         public void CloseMenu() {
             gameObject.SetActive(false);
