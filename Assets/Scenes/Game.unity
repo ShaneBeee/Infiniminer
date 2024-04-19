@@ -3440,6 +3440,7 @@ MonoBehaviour:
   playerBody: {fileID: 2082272291}
   checkIncrement: 0.1
   reach: 8
+  gamemode: 1
 --- !u!54 &1577222652
 Rigidbody:
   m_ObjectHideFlags: 0
