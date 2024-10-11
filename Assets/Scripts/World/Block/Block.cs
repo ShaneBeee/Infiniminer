@@ -1,31 +1,25 @@
 namespace World.Block {
     public class Block {
-        private readonly string _blockName;
-        private readonly bool _solid;
-        private readonly byte _id;
-        private readonly byte[] _textureId;
+        private readonly string key;
+        private readonly bool solid;
+        private readonly byte[] textureId;
 
-        internal Block(string blockName, bool solid, byte id, byte[] textureId) {
-            _blockName = blockName;
-            _solid = solid;
-            _id = id;
-            _textureId = textureId;
+        internal Block(string key, bool solid, byte[] textureId) {
+            this.key = key;
+            this.solid = solid;
+            this.textureId = textureId;
         }
 
-        public string GetBlockName() {
-            return _blockName;
+        public string GetKey() {
+            return key;
         }
 
         public bool IsSolid() {
-            return _solid;
+            return solid;
         }
-
-        public byte GetId() {
-            return _id;
-        }
-
+        
         public byte GetTextureId() {
-            return _textureId[0];
+            return textureId[0];
         }
         
     }
