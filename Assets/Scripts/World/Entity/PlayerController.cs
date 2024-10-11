@@ -120,18 +120,18 @@ namespace World.Entity {
             var speed = player.isSprinting ? player.sprintSpeed : player.walkSpeed;
             if (player.isFlying) speed *= 1.5f;
             var vel = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * speed;
-            vel.y = rigidBody.velocity.y;
+            vel.y = rigidBody.linearVelocity.y;
             // If the player stops moving, stop their sprinting
             if (vel.z <= player.walkSpeed) {
                 player.isSprinting = false;
             }
 
             vel = player.playerBody.TransformDirection(vel);
-            rigidBody.velocity = vel;
+            rigidBody.linearVelocity = vel;
         }
 
         private void ResetVelocity() {
-            rigidBody.velocity = new Vector3(0, 0, 0);
+            rigidBody.linearVelocity = new Vector3(0, 0, 0);
         }
 
         private void GetPlayerInput() {

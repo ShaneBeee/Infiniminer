@@ -21,7 +21,7 @@ namespace World.Chunk {
             this.chunk = chunk;
             this.meshFilter = chunkObject.AddComponent<MeshFilter>();
             this.meshCollider = this.meshFilter.AddComponent<MeshCollider>();
-            this.meshCollider.material = new PhysicMaterial {
+            this.meshCollider.material = new PhysicsMaterial {
                 staticFriction = 0,
                 dynamicFriction = 0
             };
