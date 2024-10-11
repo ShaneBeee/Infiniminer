@@ -28,7 +28,7 @@ namespace World.Chunk {
 
             var biome = Biomes.DEFAULT;
 
-            for (var y = 0; y < VoxelData.ChunkHeight; y++) {
+            for (var y = 0; y < VoxelData.chunkHeight; y++) {
                 for (var x = 0; x < 16; x++) {
                     for (var z = 0; z < 16; z++) {
                         var block = Blocks.ROCK;

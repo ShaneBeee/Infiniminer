@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Screens;
@@ -45,21 +44,6 @@ namespace World {
             StartCoroutine(SpawnInPlayer());
         }
 
-        public void GenChunksForEditor() {
-            StartCoroutine(GenerateChunks());
-        }
-
-        public void ClearChunksFromEditor() {
-            Debug.Log("Preparing to destroy chunks!");
-            foreach (var chunk in chunks) {
-                if (chunk != null) {
-                    DestroyImmediate(chunk.chunkObject);
-                }
-            }
-
-            Array.Clear(chunks, 0, chunks.Length);
-        }
-
         // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator GenerateChunks() {
             chunks ??= new Chunk.Chunk[worldSize, worldSize];
@@ -71,16 +55,15 @@ namespace World {
                     CreateNewChunk(x, z);
                     activeChunks++;
                     screenManager.UpdateProgressBar((float)loadedChunks++ / chunkCount);
-                    yield return new WaitForSeconds(0.001f);
+                    yield return new WaitForEndOfFrame();
                 }
             }
 
             foreach (var chunk in chunks) {
                 screenManager.UpdateProgressBar((float)loadedChunks++ / chunkCount);
                 chunk.chunkRenderer.RenderChunk();
-                yield return new WaitForSeconds(0.001f);
+                yield return new WaitForEndOfFrame();
             }
-
         }
 
         private IEnumerator SpawnInPlayer() {
@@ -89,7 +72,7 @@ namespace World {
             yield return new WaitForSeconds(0.5f);
             player.gameObject.SetActive(true);
             player.Teleport(spawnPosition);
-            
+
             screenManager.LoadingScreenEnabled(false);
         }
 
@@ -101,7 +84,7 @@ namespace World {
             var x = Random.Range(0, worldSize * 16);
             var z = Random.Range(0, worldSize * 16);
             var spawn = new Vector3(x, 0, z);
-            for (var i = VoxelData.ChunkHeight - 1; i > 0; i--) {
+            for (var i = VoxelData.chunkHeight - 1; i > 0; i--) {
                 spawn.y = i;
                 if (GetBlock(spawn.ToVector3Int()) == Blocks.AIR) continue;
                 spawn.y += 1.5f;
@@ -133,7 +116,7 @@ namespace World {
             if (chunk == null) {
                 return null;
             }
-            
+
             var x = pos.x % 16;
             var y = pos.y;
             var z = pos.z % 16;
@@ -162,7 +145,7 @@ namespace World {
 
         public bool IsBlockInWorld(Vector3Int pos) {
             var maxBlocks = worldSize * 16;
-            const int chunkHeight = VoxelData.ChunkHeight;
+            const int chunkHeight = VoxelData.chunkHeight;
             var x = pos.x;
             var y = pos.y;
             var z = pos.z;

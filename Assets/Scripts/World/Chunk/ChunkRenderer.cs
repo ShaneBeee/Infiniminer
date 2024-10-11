@@ -32,7 +32,7 @@ namespace World.Chunk {
 
         public void RenderChunk() {
             ClearMeshData();
-            for (int y = 0; y < VoxelData.ChunkHeight; y++) {
+            for (int y = 0; y < VoxelData.chunkHeight; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
                         var pos = new Vector3Int(x, y, z);
@@ -87,7 +87,7 @@ namespace World.Chunk {
 
                 var block = this.chunk.blockMap[Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y),
                     Mathf.FloorToInt(pos.z)];
-                AddTexture(block);
+                AddTexture(block, (VoxelData.Side)p);
 
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
@@ -111,13 +111,13 @@ namespace World.Chunk {
             this.meshCollider.sharedMesh = mesh;
         }
 
-        private void AddTexture(Block.Block block) {
-            float textureID = block.GetTextureId();
-            var normal = VoxelData.NormalizedBlockTextureSize;
-            var size = VoxelData.TextureAtlasSizeInBlocks;
+        private void AddTexture(Block.Block block, VoxelData.Side side) {
+            float textureID = block.GetTextureId(side);
+            float normal = VoxelData.normalizedBlockTextureSize;
+            int width = VoxelData.textureAtlasWidth;
 
-            var y = (size - 1 - Mathf.Floor(textureID / size)) / size;
-            var x = (textureID % size) / size;
+            float y = (width - 1 - Mathf.Floor(textureID / width)) / width;
+            float x = (textureID % width) / width;
 
             uvs.Add(new Vector2(x, y));
             uvs.Add(new Vector2(x, y + normal));

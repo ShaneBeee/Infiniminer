@@ -9,7 +9,7 @@ namespace World.Biome {
         public Block.Block Block { get; }
         public int minHeight { get; private set; }
 
-        public int maxHeight { get; private set; } = VoxelData.ChunkHeight;
+        public int maxHeight { get; private set; } = VoxelData.chunkHeight;
         public float scale { get; private set; } = 0.5f;
         public float threshold { get; private set; }
         public float noiseOffset { get; private set; }

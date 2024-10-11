@@ -11,7 +11,7 @@ namespace World.Chunk {
         public readonly GameObject chunkObject;
         internal readonly ChunkRenderer chunkRenderer;
 
-        internal readonly Block.Block[,,] blockMap = new Block.Block[16, VoxelData.ChunkHeight, 16];
+        internal readonly Block.Block[,,] blockMap = new Block.Block[16, VoxelData.chunkHeight, 16];
 
         public Chunk(int x, int z, World world) {
             this.coord = new ChunkCoord(x, z);
@@ -33,7 +33,7 @@ namespace World.Chunk {
         }
 
         public void SetBlockType(int x, int y, int z, Block.Block block) {
-            if (x < 0 || x > 15 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > 15) {
+            if (x < 0 || x > 15 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > 15) {
                 throw new ArgumentException($"SetBlock out of range: {x},{y},{z}");
             }
 
@@ -47,7 +47,7 @@ namespace World.Chunk {
         }
 
         public Block.Block GetBlock(int x, int y, int z) {
-            if (x < 0 || x > 15 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > 15) {
+            if (x < 0 || x > 15 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > 15) {
                 return null;
             }
 
@@ -64,7 +64,7 @@ namespace World.Chunk {
         public Vector3 Position => chunkObject.transform.position;
 
         private bool IsBlockInChunk(int x, int y, int z) {
-            return x >= 0 && x <= 15 && y >= 0 && y <= VoxelData.ChunkHeight - 1 && z >= 0 && z <= 15;
+            return x >= 0 && x <= 15 && y >= 0 && y <= VoxelData.chunkHeight - 1 && z >= 0 && z <= 15;
         }
 
 

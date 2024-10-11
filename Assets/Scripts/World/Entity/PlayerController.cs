@@ -33,7 +33,7 @@ namespace World.Entity {
             if (player.IsMenuOpen()) return;
             GetPlayerInput();
             if (player.gamemode != Gamemode.SPECTATOR) {
-                PlaceCursorBlock();
+                //PlaceCursorBlock();
             }
 
             if (player.gamemode != previousGamemode) {
